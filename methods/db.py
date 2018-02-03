@@ -116,6 +116,13 @@ def select_people_description(people_description_id):
     lines = cur.fetchall()
     return lines
 
+#从人物描述中查询人物描述文本
+def select_people_event(people_event_id):
+    sql = "select * from people_event where people_event_id = " + people_event_id
+    cur.execute(sql)
+    lines = cur.fetchall()
+    return lines
+
 #插入数据到people_description数据表
 def insert_people_description(uploader,time_stamp,description_text,draft_people_id):
     sql_insert = "insert into people_description (uploader,time_stamp,description_text,draft_people_id) " \

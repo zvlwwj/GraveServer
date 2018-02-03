@@ -59,29 +59,31 @@ class GetPeopleEventFromDraftHandler(tornado.web.RequestHandler):
             lines = mdb.select_draft_people_event(draft_people_event_id)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "commit people description error"
+            data['msg'] = "get people event draft error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "commit people description success"
-            print(lines)
-            data['description_text'] = lines[0][3]
+            data['msg'] = "get people event draft success"
+            # TODO 确认返回的格式
+            data['event_title'] = lines[0][2]
+            data['event_text'] = lines[0][3]
         self.write(json.dumps(data))
 
 #从人物描述中获取人物描述文本
-class GetPeopleDescriptionHandler(tornado.web.RequestHandler):
+class GetPeopleEventHandler(tornado.web.RequestHandler):
     def post(self):
-        people_description_id = self.get_argument("people_description_id")
+        people_event_id = self.get_argument("people_event_id")
         data = {}
         try:
-            lines = mdb.select_people_description(people_description_id)
+            lines = mdb.select_people_event(people_event_id=people_event_id)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "commit people description error"
+            data['msg'] = "commit people event error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "commit people description success"
-            print(lines)
-            data['description_text'] = lines[0][2]
+            data['msg'] = "commit people event success"
+            # TODO 确认返回的格式
+            data['event_title'] = lines[0][2]
+            data['event_text'] = lines[0][3]
         self.write(json.dumps(data))
