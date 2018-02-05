@@ -41,6 +41,29 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
                 data['people_description_id'] = people_description_id
         self.write(json.dumps(data))
 
+# TODO 更新人物描述
+class UpdatePeopleDescriptionHandler(tornado.web.RequestHandler):
+    def post(self):
+        uploader = self.get_argument("username")
+        time_stamp = self.get_argument("time_stamp")
+        people_description_id = self.get_argument("people_description_id")
+        description_text = self.get_argument("description_text")
+        data = {}
+        try:
+            # 更新数据到people_event表
+            mdb.update_people_description(uploader=uploader,
+                                          time_stamp=time_stamp,
+                                          description_text=description_text,
+                                          people_description_id=people_description_id)
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "update people event error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "update people event success"
+        self.write(json.dumps(data))
+
 #从人物描述草稿中获取人物描述文本
 class GetPeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
     def post(self):
@@ -56,7 +79,7 @@ class GetPeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
             data['code'] = 0
             data['msg'] = "commit people description success"
             print(lines)
-            data['description_text'] = lines[0][3]
+            data['description_text'] = lines[4]
         self.write(json.dumps(data))
 
 #从人物描述中获取人物描述文本

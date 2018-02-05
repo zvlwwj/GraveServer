@@ -24,8 +24,8 @@ def insert_people(uploader,name,time_stamp,cover_url=None,nationality=None,birth
 #插入数据到draft_people数据表
 def insert_draft_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None):
     sql = "insert into draft_people (uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry) " \
-          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    cur.execute(sql,(uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry))
+          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry))
     conn.commit()
     return cur.lastrowid
 
@@ -60,8 +60,8 @@ def insert_draft_people_description(uploader,time_stamp,draft_people_id,descript
 
 #插入数据到draft_people_event数据表
 def insert_draft_people_event(uploader,time_stamp,draft_people_id,title,event_text):
-    sql = "insert into draft_people_description (uploader,time_stamp,draft_people_id,title,event_text) " \
-          "values (%s,%s,%s,%s，%s)"
+    sql = "insert into draft_people_event (uploader,time_stamp,draft_people_id,title,event_text) " \
+          "values (%s,%s,%s,%s,%s)"
     cur.execute(sql, (uploader, time_stamp, draft_people_id, title, event_text))
     conn.commit()
     return cur.lastrowid
@@ -71,13 +71,13 @@ def update_draft_people_description(uploader,time_stamp,description_text,draft_p
     sqlUpdate = "update draft_people_description set uploader = %s , time_stamp = %s , description_text = %s where draft_people_id = %s"
     cur.execute(sqlUpdate, (uploader, time_stamp, description_text, draft_people_id))
     conn.commit()
-    sqlSelect = "select draft_people_description_id form draft_people_description where draft_people_id = %s"
-    cur.execute(sqlSelect, draft_people_id)
+    sqlSelect = "select draft_people_description_id from draft_people_description where draft_people_id = " + draft_people_id
+    cur.execute(sqlSelect)
     return cur.fetchone()[0]
 
 #更新数据到draft_people_event数据表
 def update_draft_people_event(uploader,time_stamp,event_title, event_text,draft_people_event_id):
-    sqlUpdate = "update draft_people_event set uploader = %s , time_stamp = %s , event_title = %s , event_text = %s where draft_people_event_id = %s"
+    sqlUpdate = "update draft_people_event set uploader = %s , time_stamp = %s , title = %s , event_text = %s where draft_people_event_id = %s"
     cur.execute(sqlUpdate, (uploader, time_stamp, event_title, event_text, draft_people_event_id))
     conn.commit()
 
@@ -99,7 +99,7 @@ def is_draft_people_event_exist(draft_people_id):
 def select_draft_people_description(draft_people_description_id):
     sql = "select * from draft_people_description where draft_people_description_id = " + draft_people_description_id
     cur.execute(sql)
-    lines = cur.fetchall()
+    lines = cur.fetchone()
     return lines
 
 #从人物描述草稿中查询人物描述文本
@@ -120,7 +120,7 @@ def select_people_description(people_description_id):
 def select_people_event(people_event_id):
     sql = "select * from people_event where people_event_id = " + people_event_id
     cur.execute(sql)
-    lines = cur.fetchall()
+    lines = cur.fetchone()
     return lines
 
 #插入数据到people_description数据表
@@ -139,6 +139,18 @@ def insert_people_event(uploader,time_stamp,event_title,event_text,draft_people_
     conn.commit()
     return cur.lastrowid
 
+#更新数据到people_event数据表
+def update_people_event(uploader,time_stamp,event_title,event_text,people_event_id):
+    sql_insert = "update people_event set uploader = %s , time_stamp = %s , title = %s , event_text = %s where people_event_id = %s"
+    cur.execute(sql_insert, (uploader, time_stamp, event_title, event_text, people_event_id))
+    conn.commit()
+
+#更新数据到people_description数据表
+def update_people_description(uploader,time_stamp,description_text,people_description_id):
+    sql_insert = "update people_description set uploader = %s , time_stamp = %s , description_text = %s where people_description_id = %s"
+    cur.execute(sql_insert, (uploader, time_stamp, description_text, people_description_id))
+    conn.commit()
+
 #删除人物描述草稿
 def delete_draft_people_description(draft_people_id):
     if is_draft_people_description_exist(draft_people_id):
@@ -147,9 +159,9 @@ def delete_draft_people_description(draft_people_id):
         conn.commit()
 
 # 删除人物事件草稿
-def delete_draft_people_event(draft_people_id):
-    if is_draft_people_event_exist(draft_people_id):
-        sql_delete = "delete from draft_people_event where draft_people_id=" + draft_people_id
+def delete_draft_people_event(people_event_id_new):
+    if is_draft_people_event_exist(people_event_id_new):
+        sql_delete = "delete from draft_people_event where people_event_id=" + people_event_id_new
         cur.execute(sql_delete)
         conn.commit()
 

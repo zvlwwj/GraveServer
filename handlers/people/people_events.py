@@ -13,6 +13,7 @@ class CommitPeopleEventsHandler(tornado.web.RequestHandler):
         uploader = self.get_argument("username")
         time_stamp = self.get_argument("time_stamp")
         draft_people_id = self.get_argument("draft_people_id")
+        draft_people_event_id = self.get_argument("draft_people_event_id", default=None)
         event_text = self.get_argument("event_text")
         event_title = self.get_argument("event_title")
         data = {}
@@ -40,14 +41,44 @@ class CommitPeopleEventsHandler(tornado.web.RequestHandler):
             logging.exception(e)
         else:
             # 删除草稿中的数据
-            try:
-                mdb.delete_draft_people_event(draft_people_id)
-            except BaseException as e:
-                logging.exception(e)
-            else:
-                data['code'] = 0
-                data['msg'] = "commit people event success"
-                data['people_event_id'] = people_event_id_new
+            data['code'] = 0
+            data['msg'] = "commit people event success"
+            data['people_event_id'] = people_event_id_new
+            if draft_people_event_id is not None:
+                print("draft_people_event_id is not none")
+                try:
+                    mdb.delete_draft_people_event(draft_people_event_id)
+                except BaseException as e:
+                    logging.exception(e)
+                else:
+                    data['msg'] = "commit people event success, but delete draft error"
+        print(json.dumps(data))
+        self.write(json.dumps(data))
+
+# 更新人物事件
+class UpdatePeopleEventsHandler(tornado.web.RequestHandler):
+    def post(self):
+        uploader = self.get_argument("username")
+        time_stamp = self.get_argument("time_stamp")
+        draft_people_id = self.get_argument("draft_people_id")
+        people_event_id = self.get_argument("people_event_id")
+        event_text = self.get_argument("event_text")
+        event_title = self.get_argument("event_title")
+        data = {}
+        try:
+            # 更新数据到people_event表
+            mdb.update_people_event(uploader=uploader,
+                                    time_stamp=time_stamp,
+                                    event_text=event_text,
+                                    event_title=event_title,
+                                    people_event_id=people_event_id)
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "update people event error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "update people event success"
         self.write(json.dumps(data))
 
 #从人物事件草稿中获取人物事件文本和标题
@@ -64,9 +95,8 @@ class GetPeopleEventFromDraftHandler(tornado.web.RequestHandler):
         else:
             data['code'] = 0
             data['msg'] = "get people event draft success"
-            # TODO 确认返回的格式
-            data['event_title'] = lines[0][2]
-            data['event_text'] = lines[0][3]
+            data['event_title'] = lines[4]
+            data['event_text'] = lines[5]
         self.write(json.dumps(data))
 
 #从人物描述中获取人物描述文本
@@ -83,7 +113,6 @@ class GetPeopleEventHandler(tornado.web.RequestHandler):
         else:
             data['code'] = 0
             data['msg'] = "commit people event success"
-            # TODO 确认返回的格式
-            data['event_title'] = lines[0][2]
-            data['event_text'] = lines[0][3]
+            data['event_title'] = lines[2]
+            data['event_text'] = lines[3]
         self.write(json.dumps(data))

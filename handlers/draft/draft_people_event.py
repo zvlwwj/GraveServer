@@ -43,10 +43,10 @@ class UpdateDraftPeopleDescriptionHandler(tornado.web.RequestHandler):
         data = {}
         try:
             mdb.update_draft_people_event(uploader=uploader,
-                                                                  time_stamp=time_stamp,
-                                                                  draft_people_event_id=draft_people_event_id,
-                                                                  event_title=event_title,
-                                                                  event_text=event_text)
+                                          time_stamp=time_stamp,
+                                          draft_people_event_id=draft_people_event_id,
+                                          event_title=event_title,
+                                          event_text=event_text)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "save people description draft error"
