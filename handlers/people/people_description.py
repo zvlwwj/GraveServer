@@ -41,7 +41,7 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
                 data['people_description_id'] = people_description_id
         self.write(json.dumps(data))
 
-# TODO 更新人物描述
+# 更新人物描述
 class UpdatePeopleDescriptionHandler(tornado.web.RequestHandler):
     def post(self):
         uploader = self.get_argument("username")

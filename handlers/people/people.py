@@ -14,17 +14,8 @@ class CommitPeopleHandler(tornado.web.RequestHandler):
         grave_place = self.get_argument("grave_place", default=None)
         birth_day = self.get_argument("birth_day", default=None)
         death_day = self.get_argument("death_day", default=None)
-        # TODO 相关文章id
-        # article_ids = self.get_argument("article_ids")
-        # TODO 声望
-        reputation = 0
-        # TODO 评论数
-        comment_count = 0
-        #description = self.get_argument("description")
         motto = self.get_argument("motto", default=None)
         industry = self.get_argument("industry", default=None)
-        #event_ids = self.get_argument("event_ids")
-        #TODO 封面图片url地址
         files = self.request.files
         if not files:
             cover_url = ""

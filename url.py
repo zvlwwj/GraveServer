@@ -19,13 +19,18 @@ from handlers.draft.draft_people_description import DraftPeopleDescriptionHandle
 from handlers.people.people_events import CommitPeopleEventsHandler, UpdatePeopleEventsHandler
 from handlers.draft.draft_people_event import CommitDraftPeopleDescriptionHandler, UpdateDraftPeopleDescriptionHandler
 from handlers.people.people_events import GetPeopleEventFromDraftHandler, GetPeopleEventHandler
+from handlers.public.AboutFile import UploadFileHandler,DeleteFileHandler
 
 base_url ="http://172.16.4.32:8000"
 
 url = [
     (r'/', IndexHandler),
-    # 登录
+    # =============登录===========
     (r'/login', LoginHandler),
+
+    # ===========文件相关=========
+    (r'/uploadFile', UploadFileHandler),
+    (r'/deleteFile', DeleteFileHandler),
 
     # ===========人物相关=========
     # 提交人物
