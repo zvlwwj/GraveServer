@@ -6,31 +6,31 @@ import json
 import url
 class CommitPeopleHandler(tornado.web.RequestHandler):
     def post(self):
-        uploader = self.get_argument("username")
-        name = self.get_argument("name")
-        nationality = self.get_argument("nationality", default=None)
-        birthplace = self.get_argument("birthplace", default=None)
-        residence = self.get_argument("residence", default=None)
-        grave_place = self.get_argument("grave_place", default=None)
-        birth_day = self.get_argument("birth_day", default=None)
-        death_day = self.get_argument("death_day", default=None)
-        motto = self.get_argument("motto", default=None)
-        industry = self.get_argument("industry", default=None)
-        files = self.request.files
-        if not files:
-            cover_url = ""
+        try:
+            uploader = self.get_argument("username")
+            name = self.get_argument("name")
+            nationality = self.get_argument("nationality", default=None)
+            birthplace = self.get_argument("birthplace", default=None)
+            residence = self.get_argument("residence", default=None)
+            grave_place = self.get_argument("grave_place", default=None)
+            birth_day = self.get_argument("birth_day", default=None)
+            death_day = self.get_argument("death_day", default=None)
+            motto = self.get_argument("motto", default=None)
+            industry = self.get_argument("industry", default=None)
+            cover_url = self.get_argument("cover_url", default=None)
+            time_stamp = self.get_argument("time_stamp")
+            draft_people_id = self.get_argument("draft_people_id")
+            line = mdb.select_draft_people(draft_people_id)
+            event_ids = line[0]
+            description_id = line[1]
+            people_id = mdb.insert_people\
+                (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, event_ids, description_id)
+            data = {}
+        except BaseException as e:
+            data['code'] = 0
+            data['msg'] = "insert success"
+            data['people_id'] = people_id
         else:
-            img_cover = files.get("cover")
-            for img in img_cover:
-                with open('./statics/cover/people/' + img['filename'], 'wb') as f:
-                    f.write(img['body'])
-                    cover_url = url.base_url + '/statics/cover/people/' + img['filename']
-        time_stamp = self.get_argument("time_stamp")
-
-        people_id = mdb.insert_people(uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry)
-
-        data = {}
-        data['code'] = 0
-        data['msg'] = "insert success"
-        data['people_id'] = people_id
+            data['code'] = -1
+            data['msg'] = "insert error"
         self.write(json.dumps(data))

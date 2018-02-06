@@ -7,17 +7,7 @@ import url
 import logging
 class InsertDraftPeopleHandler(tornado.web.RequestHandler):
     def post(self):
-        global cover_url
-        files = self.request.files
-        if not files:
-            cover_url = ""
-        else:
-            img_cover = files.get("cover")
-            for img in img_cover:
-                with open('./statics/draft/cover/people/' + img['filename'], 'wb') as f:
-                    f.write(img['body'])
-                    cover_url = url.base_url + '/statics/draft/cover/people/' + img['filename']
-
+        cover_url = self.get_argument("cover_url", default=None)
         uploader = self.get_argument("username")
         name = self.get_argument("name")
         nationality = self.get_argument("nationality", default=None)
@@ -44,16 +34,7 @@ class InsertDraftPeopleHandler(tornado.web.RequestHandler):
         self.write(json.dumps(data))
 class UpdateDraftPeopleHandler(tornado.web.RequestHandler):
     def post(self):
-        global cover_url
-        files = self.request.files
-        if not files:
-            cover_url = ""
-        else:
-            img_cover = files.get("cover")
-            for img in img_cover:
-                with open('./statics/draft/cover/people/' + img['filename'], 'wb') as f:
-                    f.write(img['body'])
-                    cover_url = url.base_url + '/statics/draft/cover/people/' + img['filename']
+        cover_url = self.get_argument("cover_url", default=None)
         draft_people_id = self.get_argument("draft_people_id")
         uploader = self.get_argument("username")
         name = self.get_argument("name")

@@ -14,10 +14,10 @@ def select_table(table, column, condition, value):
     return lines
 
 #插入数据到people数据表
-def insert_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None):
-    sql = "insert into people (uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry) " \
-          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    cur.execute(sql,(uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry))
+def insert_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None,event_ids=None,description_id=None):
+    sql = "insert into people (uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry,event_ids,description_id) " \
+          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, event_ids, description_id))
     conn.commit()
     return cur.lastrowid
 
@@ -171,3 +171,10 @@ def select_draft_people_event_ids(draft_people_id):
     cur.execute(sql)
     lines = cur.fetchone()
     return lines
+
+#从人物草稿中查询event_ids和description_id
+def select_draft_people(draft_people_id):
+    sql = "select event_ids，description_id from draft_people where draft_people_id = " + draft_people_id
+    cur.execute(sql)
+    line = cur.fetchone()
+    return line
