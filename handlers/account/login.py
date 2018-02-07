@@ -7,13 +7,14 @@ class LoginHandler(tornado.web.RequestHandler):
     def post(self):
         username = self.get_argument("username")
         password = self.get_argument("password")
-        user_infos = mdb.select_table(table="user",column="*",condition="user_name",value=username)
+        user_infos = mdb.select_table(table="user", column="*", condition="user_name", value=username)
         data = {}
         if user_infos:
             db_pwd = user_infos[0][2]
             if db_pwd == password:
                 data['code'] = 0
                 data['msg'] = "login success!"
+                data['user_id'] = user_infos[0][0]
                 json_data = json.dumps(data)
 
                 self.write(json_data)

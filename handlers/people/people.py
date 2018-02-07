@@ -1,5 +1,7 @@
 #!/usr/bin/env Python
 # coding=utf-8
+import logging
+
 import tornado.web
 import methods.db as mdb
 import json
@@ -21,16 +23,17 @@ class CommitPeopleHandler(tornado.web.RequestHandler):
             time_stamp = self.get_argument("time_stamp")
             draft_people_id = self.get_argument("draft_people_id")
             line = mdb.select_draft_people(draft_people_id)
-            event_ids = line[0]
-            description_id = line[1]
+            event_ids = line[12]
+            description_id = line[13]
             people_id = mdb.insert_people\
                 (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, event_ids, description_id)
             data = {}
         except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "insert error"
+            logging.exception(e)
+        else:
             data['code'] = 0
             data['msg'] = "insert success"
             data['people_id'] = people_id
-        else:
-            data['code'] = -1
-            data['msg'] = "insert error"
         self.write(json.dumps(data))

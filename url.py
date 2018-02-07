@@ -8,7 +8,7 @@ import sys     #utf-8，兼容汉字
 from importlib import reload
 reload(sys)
 from handlers.index import IndexHandler
-from handlers.login import LoginHandler
+from handlers.account.login import LoginHandler
 from handlers.people.people import CommitPeopleHandler
 from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionHandler
@@ -20,16 +20,22 @@ from handlers.people.people_events import CommitPeopleEventsHandler, UpdatePeopl
 from handlers.draft.draft_people_event import CommitDraftPeopleDescriptionHandler, UpdateDraftPeopleDescriptionHandler
 from handlers.people.people_events import GetPeopleEventFromDraftHandler, GetPeopleEventHandler
 from handlers.public.AboutFile import UploadFileHandler,DeleteFileHandler
+from handlers.account.getAccountInfo import GetAccountInfoHandler
 
 base_url ="http://172.16.4.32:8000"
 
 url = [
     (r'/', IndexHandler),
-    # =============登录===========
+    # ===========用户相关===========
+    # 登录
     (r'/login', LoginHandler),
+    # 获取用户信息
+    (r'/get/accountInfo', GetAccountInfoHandler),
 
     # ===========文件相关=========
+    # 上传文件
     (r'/uploadFile', UploadFileHandler),
+    # 删除文件
     (r'/deleteFile', DeleteFileHandler),
 
     # ===========人物相关=========

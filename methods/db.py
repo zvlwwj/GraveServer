@@ -174,7 +174,7 @@ def select_draft_people_event_ids(draft_people_id):
 
 #从人物草稿中查询event_ids和description_id
 def select_draft_people(draft_people_id):
-    sql = "select event_ids，description_id from draft_people where draft_people_id = " + draft_people_id
+    sql = "select * from draft_people where draft_people_id = " + draft_people_id
     cur.execute(sql)
     line = cur.fetchone()
     return line
