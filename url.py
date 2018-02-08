@@ -9,7 +9,7 @@ from importlib import reload
 reload(sys)
 from handlers.index import IndexHandler
 from handlers.account.login import LoginHandler
-from handlers.people.people import CommitPeopleHandler
+from handlers.people.people import CommitPeopleHandler,GetCreationPeopleSample
 from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionFromDraftHandler
@@ -45,7 +45,8 @@ url = [
     (r'/draft/people/commit', InsertDraftPeopleHandler),
     # 更新人物草稿
     (r'/draft/people/update', UpdateDraftPeopleHandler),
-
+    # 获取提交的人物（简单）
+    (r'/people/get/creation_sample', GetCreationPeopleSample),
 
     # ===========人物描述相关======
     # 提交人物描述

@@ -23,6 +23,14 @@ class InsertDraftPeopleHandler(tornado.web.RequestHandler):
         try:
             draft_people_id = mdb.insert_draft_people(uploader=uploader, name=name, time_stamp=time_stamp,
                                                       cover_url=cover_url, nationality=nationality, birthplace=birthplace, residence=residence, grave_place=grave_place, birth_day=birth_day, death_day=death_day, motto=motto, industry=industry)
+            # 从用户表中查询该用户的人物草稿
+            old_draft_people_ids = mdb.select_user_draft_people(user_name=uploader)[0]
+            if old_draft_people_ids is None:
+                new_draft_people_ids = str(draft_people_id)
+            else:
+                new_draft_people_ids = old_draft_people_ids+","+str(draft_people_id)
+            # 将新的草稿id更新到用户表
+            mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_draft_people_ids)
         except BaseException as e:
             logging.exception(e)
             data['code'] = -1

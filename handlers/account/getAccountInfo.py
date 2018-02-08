@@ -16,12 +16,15 @@ class GetAccountInfoHandler(tornado.web.RequestHandler):
             draft_people_ids = user_infos[0][5]
             draft_thing_ids = user_infos[0][6]
             draft_event_ids = user_infos[0][7]
-            people_ids = user_infos[0][8]
-            thing_ids = user_infos[0][9]
-            event_ids = user_infos[0][10]
-            collection_people_ids = user_infos[0][11]
-            collection_thing_ids = user_infos[0][12]
-            collection_event_ids = user_infos[0][13]
+            draft_article_ids = user_infos[0][8]
+            people_ids = user_infos[0][9]
+            thing_ids = user_infos[0][10]
+            event_ids = user_infos[0][11]
+            article_ids = user_infos[0][12]
+            collection_people_ids = user_infos[0][13]
+            collection_thing_ids = user_infos[0][14]
+            collection_event_ids = user_infos[0][15]
+            collection_article_ids = user_infos[0][16]
 
         except BaseException as e:
             data['code'] = -1
@@ -36,12 +39,15 @@ class GetAccountInfoHandler(tornado.web.RequestHandler):
             info['draft_people_ids'] = draft_people_ids
             info['draft_thing_ids'] = draft_thing_ids
             info['draft_event_ids'] = draft_event_ids
+            info['draft_article_ids'] = draft_article_ids
             info['people_ids'] = people_ids
             info['thing_ids'] = thing_ids
             info['event_ids'] = event_ids
+            info['article_ids'] = article_ids
             info['collection_people_ids'] = collection_people_ids
             info['collection_thing_ids'] = collection_thing_ids
             info['collection_event_ids'] = collection_event_ids
+            info['collection_article_ids'] = collection_article_ids
             data['info'] = info
         json_data = json.dumps(data)
         self.write(json_data)

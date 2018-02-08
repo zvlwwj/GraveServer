@@ -178,3 +178,39 @@ def select_draft_people(draft_people_id):
     cur.execute(sql)
     line = cur.fetchone()
     return line
+
+#从用户表中查询该用户的人物草稿
+def select_user_draft_people(user_name):
+    sql = "select draft_people_ids from user where user_name = " + user_name
+    cur.execute(sql)
+    line = cur.fetchone()
+    return line
+
+#从用户表中查询该用户的人物草稿
+def update_user_draft_people(user_name,draft_people_ids):
+    sql = "update user set draft_people_ids = %s where user_name = %s"
+    cur.execute(sql, (draft_people_ids, user_name))
+    line = cur.fetchone()
+    return line
+
+# 从用户表中查询该用户创建的people_ids
+def select_user_people_ids(condition, value):
+    sql = "select people_ids from user where %s = %s"
+    cur.execute(sql, (condition, value))
+    people_ids = cur.fetchone()
+    return people_ids
+
+def select_people_info(people_id):
+    sql = "select * from people where people_id = "+people_id
+    cur.execute(sql)
+    cur.fetchone()
+
+# 更新用户表的people_ids
+def update_user_people_ids(people_ids):
+    sql = "update user set people_ids = "+people_ids
+    cur.execute(sql)
+
+# 从draft_people表中删除
+def delete_draft_people(draft_people_id):
+    sql = "delete from draft_people where draft_people_id = "+draft_people_id
+    cur.execute(sql)
