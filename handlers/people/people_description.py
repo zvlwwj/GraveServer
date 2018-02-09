@@ -97,5 +97,5 @@ class GetPeopleDescriptionHandler(tornado.web.RequestHandler):
             data['code'] = 0
             data['msg'] = "commit people description success"
             print(lines)
-            data['description_text'] = lines[0][2]
+            data['description_text'] = lines[2]
         self.write(json.dumps(data))

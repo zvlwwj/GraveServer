@@ -6,6 +6,9 @@ the url structure of website
 
 import sys     #utf-8，兼容汉字
 from importlib import reload
+
+import tornado
+
 reload(sys)
 from handlers.index import IndexHandler
 from handlers.account.login import LoginHandler
