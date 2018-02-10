@@ -66,11 +66,12 @@ class GetCreationPeopleSample(tornado.web.RequestHandler):
                 infos = []
                 for id in ids:
                     line = mdb.select_people_info(id)
+                    people_id = line[0]
                     name = line[1]
                     cover_url = line[2]
                     description_id = line[11]
                     description_text = mdb.select_people_description(description_id)[2]
-                    info = {"name": name, "coverUrl": cover_url, "descriptionText": description_text}
+                    info = {"name": name, "coverUrl": cover_url, "descriptionText": description_text, "people_id": people_id}
                     infos.append(info)
                 print(infos)
                 data['infos'] = infos

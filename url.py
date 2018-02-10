@@ -16,8 +16,7 @@ from handlers.people.people import CommitPeopleHandler,GetCreationPeopleSample
 from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionFromDraftHandler
-from handlers.draft.draft_people import InsertDraftPeopleHandler
-from handlers.draft.draft_people import UpdateDraftPeopleHandler
+from handlers.draft.draft_people import InsertDraftPeopleHandler, UpdateDraftPeopleHandler, GetDraftPeopleSample
 from handlers.draft.draft_people_description import DraftPeopleDescriptionHandler
 from handlers.people.people_events import CommitPeopleEventsHandler, UpdatePeopleEventsHandler
 from handlers.draft.draft_people_event import CommitDraftPeopleDescriptionHandler, UpdateDraftPeopleDescriptionHandler
@@ -48,8 +47,11 @@ url = [
     (r'/draft/people/commit', InsertDraftPeopleHandler),
     # 更新人物草稿
     (r'/draft/people/update', UpdateDraftPeopleHandler),
+    # 获取人物草稿（简单）
+    (r'/people/get/draft_sample', GetDraftPeopleSample),
     # 获取提交的人物（简单）
     (r'/people/get/creation_sample', GetCreationPeopleSample),
+
 
     # ===========人物描述相关======
     # 提交人物描述

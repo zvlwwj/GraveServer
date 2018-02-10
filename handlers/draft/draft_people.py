@@ -40,6 +40,7 @@ class InsertDraftPeopleHandler(tornado.web.RequestHandler):
             data['msg'] = "save people draft success"
             data['draft_people_id'] = draft_people_id
         self.write(json.dumps(data))
+
 class UpdateDraftPeopleHandler(tornado.web.RequestHandler):
     def post(self):
         cover_url = self.get_argument("cover_url", default=None)
@@ -70,4 +71,36 @@ class UpdateDraftPeopleHandler(tornado.web.RequestHandler):
             data['code'] = 0
             data['msg'] = "update people draft success"
             data['draft_people_id'] = draft_people_id
+        self.write(json.dumps(data))
+
+class GetDraftPeopleSample(tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = {}
+            user_id = self.get_argument("user_id")
+            draft_people_ids = mdb.select_user_draft_people_ids(condition="user_id", value=user_id)
+            if draft_people_ids is not None:
+                ids = draft_people_ids[0].split(',')
+                infos = []
+                for id in ids:
+                    line = mdb.select_draft_people_info(id)
+                    print(line)
+                    name = line[2]
+                    cover_url = line[3]
+                    description_id = line[13]
+                    if description_id is not None:
+                        description_text = mdb.select_people_description(description_id)[2]
+                    else:
+                        description_text = None
+                    info = {"name": name, "coverUrl": cover_url, "descriptionText": description_text}
+                    infos.append(info)
+                print(infos)
+                data['infos'] = infos
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "get creation people sample error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "get creation people sample success"
         self.write(json.dumps(data))
