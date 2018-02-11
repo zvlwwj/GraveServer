@@ -87,7 +87,7 @@ class GetDraftPeopleSample(tornado.web.RequestHandler):
                     print(line)
                     name = line[2]
                     cover_url = line[3]
-                    description_id = line[13]
+                    description_id = line[14]
                     if description_id is not None:
                         description_text = mdb.select_people_description(description_id)[2]
                     else:
@@ -103,4 +103,36 @@ class GetDraftPeopleSample(tornado.web.RequestHandler):
         else:
             data['code'] = 0
             data['msg'] = "get creation people sample success"
+        self.write(json.dumps(data))
+
+class GetDraftPeopleHandler(tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = {}
+            draft_people_id = self.get_argument("draft_people_id")
+            line = mdb.select_draft_people_info(draft_people_id=draft_people_id)
+            uploader = line[1]
+            name = line[2]
+            cover_url = line[3]
+            alive = line[4]
+            nationality = line[5]
+            birthplace = line[6]
+            residence = line[7]
+            grave_place = line[8]
+            birth_day = line[9]
+            death_day = line[10]
+            motto = line[11]
+            industry = line[12]
+            event_ids = line[13]
+            description_id = line[14]
+            info = {"name": name,"cover_url":cover_url,"alive":alive,"nationality":nationality,"birthplace":birthplace,"residence":residence
+                ,"grave_place":grave_place,"birth_day":birth_day,"death_day":death_day,"description_id":description_id,"motto":motto,"industry":industry,"event_ids":event_ids,"uploader":uploader}
+            data['info'] = info
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "get people error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "get people success"
         self.write(json.dumps(data))

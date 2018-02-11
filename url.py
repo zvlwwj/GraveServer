@@ -12,7 +12,7 @@ import tornado
 reload(sys)
 from handlers.index import IndexHandler
 from handlers.account.login import LoginHandler
-from handlers.people.people import CommitPeopleHandler,GetCreationPeopleSample
+from handlers.people.people import CommitPeopleHandler, GetCreationPeopleSample, GetPeopleHandler
 from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionFromDraftHandler
@@ -51,7 +51,8 @@ url = [
     (r'/people/get/draft_sample', GetDraftPeopleSample),
     # 获取提交的人物（简单）
     (r'/people/get/creation_sample', GetCreationPeopleSample),
-
+    # 获取提交的人物（详细）
+    (r'/people/get', GetPeopleHandler),
 
     # ===========人物描述相关======
     # 提交人物描述

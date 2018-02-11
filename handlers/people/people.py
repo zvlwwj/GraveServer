@@ -69,7 +69,7 @@ class GetCreationPeopleSample(tornado.web.RequestHandler):
                     people_id = line[0]
                     name = line[1]
                     cover_url = line[2]
-                    description_id = line[11]
+                    description_id = line[12]
                     description_text = mdb.select_people_description(description_id)[2]
                     info = {"name": name, "coverUrl": cover_url, "descriptionText": description_text, "people_id": people_id}
                     infos.append(info)
@@ -82,4 +82,40 @@ class GetCreationPeopleSample(tornado.web.RequestHandler):
         else:
             data['code'] = 0
             data['msg'] = "get creation people sample success"
+        self.write(json.dumps(data))
+
+class GetPeopleHandler(tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = {}
+            people_id = self.get_argument("people_id")
+            line = mdb.select_people_info(people_id=people_id)
+            name = line[1]
+            cover_url = line[2]
+            alive = line[3]
+            nationality = line[4]
+            birthplace = line[5]
+            residence = line[6]
+            grave_place = line[7]
+            birth_day = line[8]
+            death_day = line[9]
+            article_ids = line[10]
+            reputation = line[11]
+            description_id = line[12]
+            comment_count = line[13]
+            motto = line[14]
+            industry = line[15]
+            event_ids = line[16]
+            uploader = line[18]
+            info = {"name": name,"cover_url":cover_url,"alive":alive,"nationality":nationality,"birthplace":birthplace,"residence":residence
+                ,"grave_place":grave_place,"birth_day":birth_day,"death_day":death_day,"article_ids":article_ids,"reputation":reputation
+                ,"description_id":description_id,"comment_count":comment_count,"motto":motto,"industry":industry,"event_ids":event_ids,"uploader":uploader}
+            data['info'] = info
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "get people error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "get people success"
         self.write(json.dumps(data))
