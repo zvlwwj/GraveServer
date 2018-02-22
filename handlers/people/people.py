@@ -22,13 +22,15 @@ class CommitPeopleHandler(tornado.web.RequestHandler):
             industry = self.get_argument("industry", default=None)
             cover_url = self.get_argument("cover_url", default=None)
             time_stamp = self.get_argument("time_stamp")
-            draft_people_id = self.get_argument("draft_people_id")
-            line = mdb.select_draft_people(draft_people_id)
-            event_ids = line[12]
-            description_id = line[13]
+            draft_people_id = self.get_argument("draft_people_id", default=None)
+            event_ids = None
+            description_id = None
+            if draft_people_id is not None:
+                line = mdb.select_draft_people(draft_people_id)
+                event_ids = line[12]
+                description_id = line[13]
             # 插入people表中
-            people_id = mdb.insert_people\
-                (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, event_ids, description_id)
+            people_id = mdb.insert_people(uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, event_ids, description_id)
             print(people_id)
             # 将people_id 更新到user表中
             old_people_ids = mdb.select_user_people_ids(condition="user_name", value=uploader)
@@ -39,12 +41,13 @@ class CommitPeopleHandler(tornado.web.RequestHandler):
             print(new_people_ids)
             mdb.update_user_people_ids(new_people_ids)
             # 删除draft_people数据
-            mdb.delete_draft_people(draft_people_id=draft_people_id)
-            # 更新user表中的draft_people_ids
-            old_people_draft_ids = mdb.select_user_draft_people(user_name=uploader)[0]
-            if old_people_draft_ids is not None:
-                new_people_draft_ids = old_people_draft_ids.replace(","+draft_people_id, '')
-                mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_people_draft_ids)
+            if draft_people_id is not None:
+                mdb.delete_draft_people(draft_people_id=draft_people_id)
+                # 更新user表中的draft_people_ids
+                old_people_draft_ids = mdb.select_user_draft_people(user_name=uploader)[0]
+                if old_people_draft_ids is not None:
+                    new_people_draft_ids = old_people_draft_ids.replace(","+draft_people_id, '')
+                    mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_people_draft_ids)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "insert error"
@@ -70,7 +73,8 @@ class GetCreationPeopleSample(tornado.web.RequestHandler):
                     name = line[1]
                     cover_url = line[2]
                     description_id = line[12]
-                    description_text = mdb.select_people_description(description_id)[2]
+                    if description_id is not None:
+                        description_text = mdb.select_people_description(description_id)[2]
                     info = {"name": name, "coverUrl": cover_url, "descriptionText": description_text, "people_id": people_id}
                     infos.append(info)
                 print(infos)
@@ -102,14 +106,27 @@ class GetPeopleHandler(tornado.web.RequestHandler):
             article_ids = line[10]
             reputation = line[11]
             description_id = line[12]
+            description_text = None
+            if description_id is not None:
+                description_text = mdb.select_people_description(description_id)[2]
+            description = {"description_id": description_id, "description_text": description_text}
             comment_count = line[13]
             motto = line[14]
             industry = line[15]
             event_ids = line[16]
+            events = []
+            if event_ids is not None:
+                ids = event_ids.split(",")
+                for event_id in ids:
+                    title = mdb.select_people_event(event_id)[2]
+                    event_text = mdb.select_people_event(event_id)[3]
+                    event = {"event_id": event_id, "event_title": title, "event_text": event_text}
+                    events.append(event)
             uploader = line[18]
             info = {"name": name,"cover_url":cover_url,"alive":alive,"nationality":nationality,"birthplace":birthplace,"residence":residence
                 ,"grave_place":grave_place,"birth_day":birth_day,"death_day":death_day,"article_ids":article_ids,"reputation":reputation
-                ,"description_id":description_id,"comment_count":comment_count,"motto":motto,"industry":industry,"event_ids":event_ids,"uploader":uploader}
+                ,"description":description,"comment_count":comment_count,"motto":motto,"industry":industry,"events":events,"uploader":uploader}
+            print(info)
             data['info'] = info
         except BaseException as e:
             data['code'] = -1

@@ -84,7 +84,6 @@ class GetDraftPeopleSample(tornado.web.RequestHandler):
                 infos = []
                 for id in ids:
                     line = mdb.select_draft_people_info(id)
-                    print(line)
                     name = line[2]
                     cover_url = line[3]
                     description_id = line[14]
@@ -92,9 +91,8 @@ class GetDraftPeopleSample(tornado.web.RequestHandler):
                         description_text = mdb.select_people_description(description_id)[2]
                     else:
                         description_text = None
-                    info = {"name": name, "coverUrl": cover_url, "descriptionText": description_text}
+                    info = {"name": name, "coverUrl": cover_url, "descriptionText": description_text, "draft_people_id": id}
                     infos.append(info)
-                print(infos)
                 data['infos'] = infos
         except BaseException as e:
             data['code'] = -1
@@ -124,9 +122,21 @@ class GetDraftPeopleHandler(tornado.web.RequestHandler):
             motto = line[11]
             industry = line[12]
             event_ids = line[13]
+            events = []
+            if event_ids is not None:
+                ids = event_ids.split(",")
+                for event_id in ids:
+                    title = mdb.select_people_event(event_id)[2]
+                    event_text = mdb.select_people_event(event_id)[3]
+                    event = {"event_id": event_id, "event_title": title, "event_text": event_text}
+                    events.append(event)
             description_id = line[14]
+            description_text = None
+            if description_id is not None:
+                description_text = mdb.select_people_description(description_id)[2]
+            description = {"description_id": description_id, "description_text": description_text}
             info = {"name": name,"cover_url":cover_url,"alive":alive,"nationality":nationality,"birthplace":birthplace,"residence":residence
-                ,"grave_place":grave_place,"birth_day":birth_day,"death_day":death_day,"description_id":description_id,"motto":motto,"industry":industry,"event_ids":event_ids,"uploader":uploader}
+                ,"grave_place":grave_place,"birth_day":birth_day,"death_day":death_day,"description":description,"motto":motto,"industry":industry,"events":events,"uploader":uploader}
             data['info'] = info
         except BaseException as e:
             data['code'] = -1
