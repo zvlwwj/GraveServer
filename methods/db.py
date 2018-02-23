@@ -14,27 +14,34 @@ def select_table(table, column, condition, value):
     return lines
 
 #插入数据到people数据表
-def insert_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None,event_ids=None,description_id=None):
-    sql = "insert into people (uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry,event_ids,description_id) " \
-          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, event_ids, description_id))
+def insert_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None,event_ids=None,description_id=None,alive=0):
+    sql = "insert into people (uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry,event_ids,description_id,alive) " \
+          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, event_ids, description_id, alive))
+    conn.commit()
+    return cur.lastrowid
+
+#更新数据到people数据表
+def update_people(people_id, uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None,event_ids=None,description_id=None,alive=0):
+    sql = "update people set uploader = %s , name = %s , time_stamp = %s , cover_url = %s , nationality = %s , birthplace = %s , residence = %s , grave_place = %s , birth_day = %s , death_day = %s , motto = %s , industry = %s , event_ids = %s , description_id = %s , alive = %s where people_id = %s"
+    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto,industry, event_ids, description_id, alive, people_id))
     conn.commit()
     return cur.lastrowid
 
 #插入数据到draft_people数据表
-def insert_draft_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None):
-    sql = "insert into draft_people (uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry) " \
-          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry))
+def insert_draft_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None,alive=0,event_ids=None,description_id=None):
+    sql = "insert into draft_people (uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry,alive,event_ids,description_id) " \
+          "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, alive, event_ids, description_id))
     conn.commit()
     return cur.lastrowid
 
 #更新数据到draft_people数据表
-def update_draft_people(draft_people_id,uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None):
+def update_draft_people(draft_people_id,uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None, alive=0):
     sql = "update draft_people set uploader = %s , name =  %s , time_stamp =  %s ," \
                                          " cover_url =  %s , nationality =  %s , birthplace =  %s , residence =  %s ," \
-                                         " grave_place =  %s , birth_day =  %s , death_day =  %s , motto =  %s , industry =  %s where draft_people_id = %s"
-    cur.execute(sql,(uploader,name,time_stamp,cover_url,nationality,birthplace,residence,grave_place,birth_day,death_day,motto,industry,draft_people_id))
+                                         " grave_place =  %s , birth_day =  %s , death_day =  %s , motto =  %s , industry =  %s , alive = %s where draft_people_id = %s"
+    cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto, industry, alive, draft_people_id))
     conn.commit()
 
 # 更新数据到draft_people数据表的description_id
@@ -59,9 +66,9 @@ def insert_draft_people_description(uploader,time_stamp,draft_people_id,descript
     return cur.lastrowid
 
 #插入数据到draft_people_event数据表
-def insert_draft_people_event(uploader,time_stamp,draft_people_id,title,event_text):
-    sql = "insert into draft_people_event (uploader,time_stamp,draft_people_id,title,event_text) " \
-          "values (%s,%s,%s,%s,%s)"
+def insert_draft_people_event(uploader,time_stamp,draft_people_id,title,event_text,people_id):
+    sql = "insert into draft_people_event (uploader,time_stamp,draft_people_id,title,event_text,people_id) " \
+          "values (%s,%s,%s,%s,%s,%s)"
     cur.execute(sql, (uploader, time_stamp, draft_people_id, title, event_text))
     conn.commit()
     return cur.lastrowid
@@ -76,9 +83,9 @@ def update_draft_people_description(uploader,time_stamp,description_text,draft_p
     return cur.fetchone()[0]
 
 #更新数据到draft_people_event数据表
-def update_draft_people_event(uploader,time_stamp,event_title, event_text,draft_people_event_id):
-    sqlUpdate = "update draft_people_event set uploader = %s , time_stamp = %s , title = %s , event_text = %s where draft_people_event_id = %s"
-    cur.execute(sqlUpdate, (uploader, time_stamp, event_title, event_text, draft_people_event_id))
+def update_draft_people_event(uploader,time_stamp,event_title, event_text,draft_people_event_id,people_id):
+    sqlUpdate = "update draft_people_event set uploader = %s , time_stamp = %s , title = %s , event_text = %s , people_id = %s where draft_people_event_id = %s"
+    cur.execute(sqlUpdate, (uploader, time_stamp, event_title, event_text, people_id, draft_people_event_id))
     conn.commit()
 
 #查询数据库中是否存在指定draft_people_id的事件草稿

@@ -19,10 +19,16 @@ class InsertDraftPeopleHandler(tornado.web.RequestHandler):
         motto = self.get_argument("motto", default=None)
         industry = self.get_argument("industry", default=None)
         time_stamp = self.get_argument("time_stamp")
+        alive = self.get_argument("alive")
+        event_ids = self.get_argument("event_ids", default=None)
+        description_id = self.get_argument("description_id", default=None)
         data = {}
         try:
             draft_people_id = mdb.insert_draft_people(uploader=uploader, name=name, time_stamp=time_stamp,
-                                                      cover_url=cover_url, nationality=nationality, birthplace=birthplace, residence=residence, grave_place=grave_place, birth_day=birth_day, death_day=death_day, motto=motto, industry=industry)
+                                                      cover_url=cover_url, nationality=nationality, birthplace=birthplace,
+                                                      residence=residence, grave_place=grave_place, birth_day=birth_day,
+                                                      death_day=death_day, motto=motto, industry=industry, alive=alive,
+                                                      event_ids=event_ids, description_id=description_id)
             # 从用户表中查询该用户的人物草稿
             old_draft_people_ids = mdb.select_user_draft_people(user_name=uploader)[0]
             if old_draft_people_ids is None:
@@ -56,13 +62,14 @@ class UpdateDraftPeopleHandler(tornado.web.RequestHandler):
         motto = self.get_argument("motto", default=None)
         industry = self.get_argument("industry", default=None)
         time_stamp = self.get_argument("time_stamp")
+        alive = self.get_argument("alive")
         data = {}
         try:
             draft_people_id = mdb.update_draft_people(draft_people_id=draft_people_id, uploader=uploader, name=name, time_stamp=time_stamp,
                                                       cover_url=cover_url, nationality=nationality,
                                                       birthplace=birthplace, residence=residence,
                                                       grave_place=grave_place, birth_day=birth_day, death_day=death_day,
-                                                      motto=motto, industry=industry)
+                                                      motto=motto, industry=industry,alive=alive)
         except BaseException as e:
             logging.exception(e)
             data['code'] = -1
@@ -79,7 +86,8 @@ class GetDraftPeopleSample(tornado.web.RequestHandler):
             data = {}
             user_id = self.get_argument("user_id")
             draft_people_ids = mdb.select_user_draft_people_ids(condition="user_id", value=user_id)
-            if draft_people_ids is not None:
+            print(draft_people_ids)
+            if draft_people_ids[0] is not None:
                 ids = draft_people_ids[0].split(',')
                 infos = []
                 for id in ids:

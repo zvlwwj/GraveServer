@@ -12,7 +12,7 @@ import tornado
 reload(sys)
 from handlers.index import IndexHandler
 from handlers.account.login import LoginHandler
-from handlers.people.people import CommitPeopleHandler, GetCreationPeopleSample, GetPeopleHandler
+from handlers.people.people import CommitPeopleHandler, GetCreationPeopleSample, GetPeopleHandler, UpdatePeopleHandler
 from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionFromDraftHandler
@@ -43,6 +43,8 @@ url = [
     # ===========人物相关=========
     # 提交人物
     (r'/people/commit', CommitPeopleHandler),
+    # 更新人物
+    (r'/people/update', UpdatePeopleHandler),
     # 提交人物草稿
     (r'/draft/people/commit', InsertDraftPeopleHandler),
     # 更新人物草稿

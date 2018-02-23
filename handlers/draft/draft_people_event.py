@@ -12,6 +12,7 @@ class CommitDraftPeopleDescriptionHandler(tornado.web.RequestHandler):
         uploader = self.get_argument("username")
         time_stamp = self.get_argument("time_stamp")
         draft_people_id = self.get_argument("draft_people_id")
+        people_id = self.get_argument("people_id")
         event_title = self.get_argument("event_title")
         event_text = self.get_argument("event_text")
         data = {}
@@ -21,7 +22,8 @@ class CommitDraftPeopleDescriptionHandler(tornado.web.RequestHandler):
                                                                   time_stamp=time_stamp,
                                                                   draft_people_id=draft_people_id,
                                                                   title=event_title,
-                                                                  event_text=event_text)
+                                                                  event_text=event_text,
+                                                                  people_id=people_id)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "save people event draft error"
@@ -40,13 +42,15 @@ class UpdateDraftPeopleDescriptionHandler(tornado.web.RequestHandler):
         draft_people_event_id = self.get_argument("draft_people_event_id")
         event_title = self.get_argument("event_title")
         event_text = self.get_argument("event_text")
+        people_id = self.get_argument("people_id")
         data = {}
         try:
             mdb.update_draft_people_event(uploader=uploader,
                                           time_stamp=time_stamp,
                                           draft_people_event_id=draft_people_event_id,
                                           event_title=event_title,
-                                          event_text=event_text)
+                                          event_text=event_text,
+                                          people_id=people_id)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "save people description draft error"
