@@ -1,10 +1,10 @@
 #!/usr/bin/env Python
 # coding=utf-8
 
-import MySQLdb
+import mysql.connector
 
-conn = MySQLdb.connect(host="localhost", user="root", passwd="", db="grave_server_db", port=3306, charset="utf8")    #连接对象
-
+# conn = mysql.connector.connect(host="localhost", user="root", passwd="zv63108412", db="grave_server_db", port=3306, charset="utf8")    #连接对象
+conn = mysql.connector.connect(host="localhost", user="root", passwd="", db="grave_server_db", port=3306, charset="utf8")
 cur = conn.cursor()    #游标对象
 
 def select_table(table, column, condition, value):
@@ -50,12 +50,23 @@ def update_draft_people_description_id(draft_people_id, time_stamp, description_
     cur.execute(sql, (description_id, time_stamp, draft_people_id))
     conn.commit()
 
+# 更新数据到people数据表的description_id
+def update_people_description_id(people_id, time_stamp, description_id):
+    sql = "update people set description_id =  %s ,time_stamp = %s where people_id = %s"
+    cur.execute(sql, (description_id, time_stamp, people_id))
+    conn.commit()
+
 # 更新数据到draft_people数据表的event_id
 def update_draft_people_event_id(draft_people_id, time_stamp, event_ids):
     sql = "update draft_people set event_ids =  %s ,time_stamp = %s where draft_people_id = %s"
     cur.execute(sql, (event_ids, time_stamp, draft_people_id))
     conn.commit()
 
+# 更新数据到draft_people数据表的event_id
+def update_people_event_id(people_id, time_stamp, event_ids):
+    sql = "update people set event_ids =  %s ,time_stamp = %s where people_id = %s"
+    cur.execute(sql, (event_ids, time_stamp, people_id))
+    conn.commit()
 
 #插入数据到draft_people_description数据表
 def insert_draft_people_description(uploader,time_stamp,draft_people_id,description_text):
@@ -131,18 +142,18 @@ def select_people_event(people_event_id):
     return lines
 
 #插入数据到people_description数据表
-def insert_people_description(uploader,time_stamp,description_text,draft_people_id):
-    sql_insert = "insert into people_description (uploader,time_stamp,description_text,draft_people_id) " \
-          "values (%s,%s,%s,%s)"
-    cur.execute(sql_insert, (uploader, time_stamp, description_text, draft_people_id))
+def insert_people_description(uploader,time_stamp,description_text,draft_people_id,people_id):
+    sql_insert = "insert into people_description (uploader,time_stamp,description_text,draft_people_id,people_id) " \
+          "values (%s,%s,%s,%s,%s)"
+    cur.execute(sql_insert, (uploader, time_stamp, description_text, draft_people_id,people_id))
     conn.commit()
     return cur.lastrowid
 
 #插入数据到people_event数据表
-def insert_people_event(uploader,time_stamp,event_title,event_text,draft_people_id):
-    sql_insert = "insert into people_event (uploader,time_stamp,title,event_text,draft_people_id) " \
-                 "values (%s,%s,%s,%s,%s)"
-    cur.execute(sql_insert, (uploader, time_stamp, event_title, event_text, draft_people_id))
+def insert_people_event(uploader,time_stamp,event_title,event_text,draft_people_id,people_id):
+    sql_insert = "insert into people_event (uploader,time_stamp,title,event_text,draft_people_id,people_id) " \
+                 "values (%s,%s,%s,%s,%s,%s)"
+    cur.execute(sql_insert, (uploader, time_stamp, event_title, event_text, draft_people_id, people_id))
     conn.commit()
     return cur.lastrowid
 
@@ -175,6 +186,13 @@ def delete_draft_people_event(people_event_id_new):
 #从人物草稿中查询event_ids
 def select_draft_people_event_ids(draft_people_id):
     sql = "select event_ids from draft_people where draft_people_id = "+draft_people_id
+    cur.execute(sql)
+    lines = cur.fetchone()
+    return lines
+
+#从人物中查询event_ids
+def select_people_event_ids(people_id):
+    sql = "select event_ids from people where people_id = " + people_id
     cur.execute(sql)
     lines = cur.fetchone()
     return lines
