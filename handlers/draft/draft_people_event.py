@@ -11,8 +11,8 @@ class CommitDraftPeopleDescriptionHandler(tornado.web.RequestHandler):
     def post(self):
         uploader = self.get_argument("username")
         time_stamp = self.get_argument("time_stamp")
-        draft_people_id = self.get_argument("draft_people_id")
-        people_id = self.get_argument("people_id")
+        draft_people_id = self.get_argument("draft_people_id", default=None)
+        people_id = self.get_argument("people_id", default=None)
         event_title = self.get_argument("event_title")
         event_text = self.get_argument("event_text")
         data = {}

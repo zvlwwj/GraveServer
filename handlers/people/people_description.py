@@ -12,27 +12,35 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
     def post(self):
         uploader = self.get_argument("username")
         time_stamp = self.get_argument("time_stamp")
-        draft_people_id = self.get_argument("draft_people_id")
-        people_id = self.get_argument("people_id")
+        draft_people_id = self.get_argument("draft_people_id", default=None)
+        people_id = self.get_argument("people_id",  default=None)
         description_text = self.get_argument("description_text")
         data = {}
         try:
             #插入数据到people_description表
-            people_description_id = mdb.insert_people_description(uploader=uploader,
-                                                                  time_stamp=time_stamp,
-                                                                  description_text=description_text,
-                                                                  draft_people_id=draft_people_id,
-                                                                  people_id=people_id)
             if draft_people_id is not None:
-                # 更新数据表
-                mdb.update_draft_people_description_id(draft_people_id=draft_people_id,
-                                                       time_stamp=time_stamp,
-                                                       description_id=people_description_id)
+                if mdb.is_people_description_exist(draft_people_id=draft_people_id, people_id=None):
+                    people_description_id = mdb.update_people_description(uploader=uploader, time_stamp=time_stamp, description_text=description_text, draft_people_id=draft_people_id, people_id=people_id)
+                else:
+                    people_description_id = mdb.insert_people_description(uploader=uploader,time_stamp=time_stamp,description_text=description_text, draft_people_id=draft_people_id,people_id=people_id)
+                    # 更新数据表draft_people
+                    mdb.update_draft_people_description_id(draft_people_id=draft_people_id,
+                                                           time_stamp=time_stamp,
+                                                           description_id=people_description_id)
             elif people_id is not None:
-                # 更新数据表
-                mdb.update_people_description_id(people_id=people_id,
-                                                 time_stamp=time_stamp,
-                                                 description_id=people_description_id)
+                if mdb.is_people_description_exist(draft_people_id=None, people_id=people_id):
+                    people_description_id = mdb.update_people_description(uploader=uploader, time_stamp=time_stamp,
+                                                  description_text=description_text, draft_people_id=draft_people_id,
+                                                  people_id=people_id)
+                else:
+                    people_description_id = mdb.insert_people_description(uploader=uploader, time_stamp=time_stamp,
+                                                                          description_text=description_text,
+                                                                          draft_people_id=draft_people_id,
+                                                                          people_id=people_id)
+                    # 更新数据表people
+                    mdb.update_people_description_id(people_id=people_id,
+                                                     time_stamp=time_stamp,
+                                                     description_id=people_description_id)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "commit people description error"
@@ -40,8 +48,7 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
         else:
             # 删除草稿中的数据
             try:
-                if draft_people_id is not None:
-                    mdb.delete_draft_people_description(draft_people_id)
+                mdb.delete_draft_people_description(draft_people_id=draft_people_id,people_id=people_id)
             except BaseException as e:
                 logging.exception(e)
             else:
@@ -52,15 +59,16 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
 
 # 更新人物描述
 class UpdatePeopleDescriptionHandler(tornado.web.RequestHandler):
-    def post(self):
+    def post(self, success="update people event success"):
         uploader = self.get_argument("username")
         time_stamp = self.get_argument("time_stamp")
         people_description_id = self.get_argument("people_description_id")
+        print("people_description_id"+str(people_description_id))
         description_text = self.get_argument("description_text")
         data = {}
         try:
             # 更新数据到people_description表
-            mdb.update_people_description(uploader=uploader,
+            mdb.update_people_description_use_id(uploader=uploader,
                                           time_stamp=time_stamp,
                                           description_text=description_text,
                                           people_description_id=people_description_id)
@@ -70,7 +78,7 @@ class UpdatePeopleDescriptionHandler(tornado.web.RequestHandler):
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "update people event success"
+            data['msg'] = success
         self.write(json.dumps(data))
 
 #从人物描述草稿中获取人物描述文本

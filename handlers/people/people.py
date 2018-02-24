@@ -80,30 +80,10 @@ class UpdatePeopleHandler(tornado.web.RequestHandler):
             industry = self.get_argument("industry", default=None)
             cover_url = self.get_argument("cover_url", default=None)
             time_stamp = self.get_argument("time_stamp")
-            draft_people_id = self.get_argument("draft_people_id", default=None)
             alive = self.get_argument("alive", default=0)
             people_id = self.get_argument("people_id")
-            event_ids = None
-            description_id = None
-            if draft_people_id is not None:
-                line = mdb.select_draft_people(draft_people_id)
-                event_ids = line[13]
-                description_id = line[14]
             # 更新people表
-            mdb.update_people(uploader=uploader, name=name, time_stamp=time_stamp, cover_url=cover_url, nationality=nationality, birthplace=birthplace, residence=residence, grave_place=grave_place, birth_day=birth_day, death_day=death_day, motto=motto, industry=industry, event_ids=event_ids, description_id=description_id, alive=alive, people_id=people_id)
-            # 删除draft_people数据
-            if draft_people_id is not None:
-                mdb.delete_draft_people(draft_people_id=draft_people_id)
-                # 更新user表中的draft_people_ids
-                old_people_draft_ids = mdb.select_user_draft_people(user_name=uploader)[0]
-                print("old_people_draft_ids"+str(old_people_draft_ids))
-                if old_people_draft_ids is not None:
-                    if "," not in old_people_draft_ids:
-                        new_people_draft_ids = None
-                    else:
-                        new_people_draft_ids = old_people_draft_ids.replace(","+draft_people_id, '')
-                    print("new_people_draft_ids" + str(new_people_draft_ids))
-                    mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_people_draft_ids)
+            mdb.update_people(uploader=uploader, name=name, time_stamp=time_stamp, cover_url=cover_url, nationality=nationality, birthplace=birthplace, residence=residence, grave_place=grave_place, birth_day=birth_day, death_day=death_day, motto=motto, industry=industry, alive=alive, people_id=people_id)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "insert error"
