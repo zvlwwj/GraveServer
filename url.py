@@ -15,7 +15,7 @@ from handlers.account.login import LoginHandler
 from handlers.people.people import CommitPeopleHandler, GetCreationPeopleSample, GetPeopleHandler, UpdatePeopleHandler
 from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler, DeletePeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionHandler
-from handlers.people.people_description import GetPeopleDescriptionFromDraftHandler
+from handlers.people.people_description import GetPeopleDescriptionFromDraftHandler,DeletePeopleDescriptionFromDraftHandler
 from handlers.draft.draft_people import InsertDraftPeopleHandler, UpdateDraftPeopleHandler, GetDraftPeopleSample, GetDraftPeopleHandler
 from handlers.draft.draft_people_description import DraftPeopleDescriptionHandler
 from handlers.people.people_events import CommitPeopleEventsHandler, UpdatePeopleEventsHandler
@@ -24,7 +24,7 @@ from handlers.people.people_events import GetPeopleEventFromDraftHandler, GetPeo
 from handlers.public.AboutFile import UploadFileHandler,DeleteFileHandler
 from handlers.account.getAccountInfo import GetAccountInfoHandler
 
-base_url ="http://172.16.4.32:8000"
+base_url ="http://192.168.31.134:8000"
 
 url = [
     (r'/', IndexHandler),

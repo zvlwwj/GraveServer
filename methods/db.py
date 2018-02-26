@@ -34,9 +34,21 @@ def delete_people_description_from_people(people_id):
     cur.execute(sql, (people_id))
     conn.commit()
 
+#从people数据表中删除描述草稿
+def delete_draft_people_description_from_people(people_id):
+    sql = "update people set draft_description_id = null where people_id = %s"
+    cur.execute(sql, (people_id))
+    conn.commit()
+
 #从draft_people数据表中删除描述
 def delete_people_description_from_draft_people(draft_people_id):
     sql = "update draft_people set description_id = null where draft_people_id = %s"
+    cur.execute(sql, (draft_people_id))
+    conn.commit()
+
+#从draft_people数据表中删除描述草稿
+def delete_draft_people_description_from_draft_people(draft_people_id):
+    sql = "update draft_people set draft_description_id = null where draft_people_id = %s"
     cur.execute(sql, (draft_people_id))
     conn.commit()
 

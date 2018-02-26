@@ -137,9 +137,18 @@ class DeletePeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
             people_id = line[3]
             draft_people_id = line[2]
             if people_id is not None:
-                mdb.delete_people_description_from_people(people_id=people_id)
+                mdb.delete_draft_people_description_from_people(people_id=people_id)
             elif draft_people_id is not None:
-                mdb.delete_people_description_from_draft_people(draft_people_id=draft_people_id)
+                mdb.delete_draft_people_description_from_draft_people(draft_people_id=draft_people_id)
+            mdb.delete_draft_people_description(people_id=people_id,draft_people_id=draft_people_id)
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "delete people description draft error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "delete people description draft success"
+        self.write(json.dumps(data))
 
 #从人物描述中获取人物描述文本
 class GetPeopleDescriptionHandler(tornado.web.RequestHandler):
