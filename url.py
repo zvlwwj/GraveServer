@@ -13,7 +13,7 @@ reload(sys)
 from handlers.index import IndexHandler
 from handlers.account.login import LoginHandler
 from handlers.people.people import CommitPeopleHandler, GetCreationPeopleSample, GetPeopleHandler, UpdatePeopleHandler
-from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler
+from handlers.people.people_description import CommitPeopleDescriptionHandler, UpdatePeopleDescriptionHandler, DeletePeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionHandler
 from handlers.people.people_description import GetPeopleDescriptionFromDraftHandler
 from handlers.draft.draft_people import InsertDraftPeopleHandler, UpdateDraftPeopleHandler, GetDraftPeopleSample, GetDraftPeopleHandler
@@ -46,11 +46,11 @@ url = [
     # 更新人物
     (r'/people/update', UpdatePeopleHandler),
     # 提交人物草稿
-    (r'/draft/people/commit', InsertDraftPeopleHandler),
+    (r'/draft/people/commit', InsertDraftPeopleHandler),# OK
     # 更新人物草稿
-    (r'/draft/people/update', UpdateDraftPeopleHandler),
+    (r'/draft/people/update', UpdateDraftPeopleHandler),# OK
     # 获取人物草稿（简单）
-    (r'/people/get/draft_sample', GetDraftPeopleSample),
+    (r'/people/get/draft_sample', GetDraftPeopleSample),# OK
     # 获取提交的人物（简单）
     (r'/people/get/creation_sample', GetCreationPeopleSample),
     # 获取提交的人物（详细）
@@ -62,25 +62,28 @@ url = [
     (r'/people/commit/description', CommitPeopleDescriptionHandler),
     # 更新人物描述
     (r'/people/update/description', UpdatePeopleDescriptionHandler),
+    # 删除人物描述
+    (r'/people/delete/description', DeletePeopleDescriptionHandler),
     # 提交或更新人物描述草稿
     (r'/draft/people/description', DraftPeopleDescriptionHandler),
     # 获取提交的人物描述
     (r'/people/get/description', GetPeopleDescriptionHandler),
     # 获取草稿中的的人物描述
     (r'/people/get/description_from_draft', GetPeopleDescriptionFromDraftHandler),
-
+    # 删除草稿中的人物描述
+    (r'/people/delete/description_from_draft', DeletePeopleDescriptionFromDraftHandler),
 
     # ===========人物事件相关========
     # 提交人物事件
-    (r'/people/commit/event', CommitPeopleEventsHandler),
+    (r'/people/commit/event', CommitPeopleEventsHandler),# OK
     # 更新人物事件
-    (r'/people/update/event', UpdatePeopleEventsHandler),
+    (r'/people/update/event', UpdatePeopleEventsHandler),# OK
     # 提交人物事件草稿
-    (r'/draft/people/commit/event', CommitDraftPeopleDescriptionHandler),
+    (r'/draft/people/commit/event', CommitDraftPeopleDescriptionHandler),# OK
     # 更新人物事件草稿
-    (r'/draft/people/update/event', UpdateDraftPeopleDescriptionHandler),
+    (r'/draft/people/update/event', UpdateDraftPeopleDescriptionHandler),# OK
     # 获取提交的人物事件
-    (r'/people/get/event', GetPeopleEventHandler),
+    (r'/people/get/event', GetPeopleEventHandler),# OK
     # 获取草稿中的的人物描述
-    (r'/people/get/event_from_draft', GetPeopleEventFromDraftHandler)
+    (r'/people/get/event_from_draft', GetPeopleEventFromDraftHandler)# OK
 ]

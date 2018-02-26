@@ -2,7 +2,7 @@
 # coding=utf-8
 
 import mysql.connector
-
+import mysql.connector.cursors
 # conn = mysql.connector.connect(host="localhost", user="root", passwd="zv63108412", db="grave_server_db", port=3306, charset="utf8")    #连接对象
 conn = mysql.connector.connect(host="localhost", user="root", passwd="", db="grave_server_db", port=3306, charset="utf8")
 cur = conn.cursor()    #游标对象
@@ -27,6 +27,18 @@ def update_people(people_id, uploader,name,time_stamp,cover_url=None,nationality
     cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto,industry, alive, people_id))
     conn.commit()
     return cur.lastrowid
+
+#从people数据表中删除描述
+def delete_people_description_from_people(people_id):
+    sql = "update people set description_id = null where people_id = %s"
+    cur.execute(sql, (people_id))
+    conn.commit()
+
+#从draft_people数据表中删除描述
+def delete_people_description_from_draft_people(draft_people_id):
+    sql = "update draft_people set description_id = null where draft_people_id = %s"
+    cur.execute(sql, (draft_people_id))
+    conn.commit()
 
 #插入数据到draft_people数据表
 def insert_draft_people(uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None,alive=0,event_ids=None,description_id=None):
@@ -102,9 +114,9 @@ def update_draft_people_description(uploader,time_stamp,description_text,draft_p
         return cur.fetchone()[0]
 
 #更新数据到draft_people_event数据表
-def update_draft_people_event(uploader,time_stamp,event_title, event_text,draft_people_event_id,people_id):
-    sqlUpdate = "update draft_people_event set uploader = %s , time_stamp = %s , title = %s , event_text = %s , people_id = %s where draft_people_event_id = %s"
-    cur.execute(sqlUpdate, (uploader, time_stamp, event_title, event_text, people_id, draft_people_event_id))
+def update_draft_people_event(uploader,time_stamp,event_title, event_text,draft_people_event_id):
+    sqlUpdate = "update draft_people_event set uploader = %s , time_stamp = %s , title = %s , event_text = %s where draft_people_event_id = %s"
+    cur.execute(sqlUpdate, (uploader, time_stamp, event_title, event_text, draft_people_event_id))
     conn.commit()
 
 #查询数据库中是否存在指定draft_people_id/people_id的事件草稿
@@ -217,7 +229,7 @@ def update_people_description(uploader,time_stamp,description_text,draft_people_
         return line[0]
 
 #删除人物描述草稿
-def delete_draft_people_description(draft_people_id,people_id):
+def delete_draft_people_description(draft_people_id=None,people_id=None):
     if draft_people_id is not None:
         if is_draft_people_description_exist(draft_people_id=draft_people_id, people_id=None):
             sql_delete = "delete from draft_people_description where draft_people_id="+draft_people_id
@@ -228,6 +240,12 @@ def delete_draft_people_description(draft_people_id,people_id):
             sql_delete = "delete from draft_people_description where people_id="+people_id
             cur.execute(sql_delete)
             conn.commit()
+
+# 删除人物描述草稿
+def delete_people_description(people_description_id):
+    sql = "delete from people_description where people_description_id="+people_description_id
+    cur.execute(sql)
+    conn.commit()
 
 # 删除人物事件草稿
 def delete_draft_people_event(people_event_id_new):

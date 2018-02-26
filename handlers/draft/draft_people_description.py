@@ -24,12 +24,14 @@ class DraftPeopleDescriptionHandler(tornado.web.RequestHandler):
                                                                                   draft_people_id=draft_people_id,
                                                                                   description_text=description_text,
                                                                                   people_id=people_id)
+                print("update_draft_people_description")
             else:
                 draft_people_description_id = mdb.insert_draft_people_description(uploader=uploader,
                                                                                   time_stamp=time_stamp,
                                                                                   draft_people_id=draft_people_id,
                                                                                   description_text=description_text,
                                                                                   people_id=people_id)
+                print("insert_draft_people_description")
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "save people description draft error"

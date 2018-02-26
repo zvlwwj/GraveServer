@@ -20,8 +20,10 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
             #插入数据到people_description表
             if draft_people_id is not None:
                 if mdb.is_people_description_exist(draft_people_id=draft_people_id, people_id=None):
+                    print("update_people_description")
                     people_description_id = mdb.update_people_description(uploader=uploader, time_stamp=time_stamp, description_text=description_text, draft_people_id=draft_people_id, people_id=people_id)
                 else:
+                    print("insert_people_description")
                     people_description_id = mdb.insert_people_description(uploader=uploader,time_stamp=time_stamp,description_text=description_text, draft_people_id=draft_people_id,people_id=people_id)
                     # 更新数据表draft_people
                     mdb.update_draft_people_description_id(draft_people_id=draft_people_id,
@@ -29,10 +31,12 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
                                                            description_id=people_description_id)
             elif people_id is not None:
                 if mdb.is_people_description_exist(draft_people_id=None, people_id=people_id):
+                    print("update_people_description")
                     people_description_id = mdb.update_people_description(uploader=uploader, time_stamp=time_stamp,
                                                   description_text=description_text, draft_people_id=draft_people_id,
                                                   people_id=people_id)
                 else:
+                    print("insert_people_description")
                     people_description_id = mdb.insert_people_description(uploader=uploader, time_stamp=time_stamp,
                                                                           description_text=description_text,
                                                                           draft_people_id=draft_people_id,
@@ -59,7 +63,7 @@ class CommitPeopleDescriptionHandler(tornado.web.RequestHandler):
 
 # 更新人物描述
 class UpdatePeopleDescriptionHandler(tornado.web.RequestHandler):
-    def post(self, success="update people event success"):
+    def post(self):
         uploader = self.get_argument("username")
         time_stamp = self.get_argument("time_stamp")
         people_description_id = self.get_argument("people_description_id")
@@ -74,12 +78,36 @@ class UpdatePeopleDescriptionHandler(tornado.web.RequestHandler):
                                           people_description_id=people_description_id)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "update people event error"
+            data['msg'] = "update people description error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = success
+            data['msg'] = "update people description success"
         self.write(json.dumps(data))
+
+# 删除人物描述
+class DeletePeopleDescriptionHandler(tornado.web.RequestHandler):
+    def post(self):
+        people_description_id = self.get_argument("people_description_id")
+        data = {}
+        try:
+            line = mdb.select_people_description(people_description_id)
+            people_id = line[4]
+            draft_people_id = line[5]
+            if people_id is not None:
+                mdb.delete_people_description_from_people(people_id=people_id)
+            elif draft_people_id is not None:
+                mdb.delete_people_description_from_draft_people(draft_people_id=draft_people_id)
+            mdb.delete_people_description(people_description_id=people_description_id)
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "delete people description error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "delete people description success"
+        self.write(json.dumps(data))
+
 
 #从人物描述草稿中获取人物描述文本
 class GetPeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
@@ -98,6 +126,20 @@ class GetPeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
             print(lines)
             data['description_text'] = lines[4]
         self.write(json.dumps(data))
+
+#删除人物描述草稿
+class DeletePeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
+    def post(self):
+        draft_people_description_id = self.get_argument("draft_people_description_id")
+        data = {}
+        try:
+            line = mdb.select_draft_people_description(draft_people_description_id)
+            people_id = line[3]
+            draft_people_id = line[2]
+            if people_id is not None:
+                mdb.delete_people_description_from_people(people_id=people_id)
+            elif draft_people_id is not None:
+                mdb.delete_people_description_from_draft_people(draft_people_id=draft_people_id)
 
 #从人物描述中获取人物描述文本
 class GetPeopleDescriptionHandler(tornado.web.RequestHandler):

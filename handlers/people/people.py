@@ -51,7 +51,7 @@ class CommitPeopleHandler(tornado.web.RequestHandler):
                     if "," not in old_people_draft_ids:
                         new_people_draft_ids = None
                     else:
-                        new_people_draft_ids = old_people_draft_ids.replace(","+draft_people_id, '')
+                        new_people_draft_ids = old_people_draft_ids.replace(","+str(draft_people_id), '')
                     print("new_people_draft_ids" + str(new_people_draft_ids))
                     mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_people_draft_ids)
         except BaseException as e:
