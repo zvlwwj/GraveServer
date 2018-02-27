@@ -136,10 +136,6 @@ class DeletePeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
             line = mdb.select_draft_people_description(draft_people_description_id)
             people_id = line[3]
             draft_people_id = line[2]
-            if people_id is not None:
-                mdb.delete_draft_people_description_from_people(people_id=people_id)
-            elif draft_people_id is not None:
-                mdb.delete_draft_people_description_from_draft_people(draft_people_id=draft_people_id)
             mdb.delete_draft_people_description(people_id=people_id,draft_people_id=draft_people_id)
         except BaseException as e:
             data['code'] = -1

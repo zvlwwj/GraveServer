@@ -24,6 +24,24 @@ class CommitDraftPeopleDescriptionHandler(tornado.web.RequestHandler):
                                                                   title=event_title,
                                                                   event_text=event_text,
                                                                   people_id=people_id)
+            print("draft_people_event_id"+str(draft_people_event_id))
+            if people_id is not None:
+                old_draft_event_ids = mdb.select_people_draft_event_ids(people_id=people_id)[0]
+                if old_draft_event_ids is not None and len(str(old_draft_event_ids))>0:
+                    new_draft_event_ids = old_draft_event_ids + "," + str(draft_people_event_id)
+                else:
+                    new_draft_event_ids = draft_people_event_id
+                mdb.update_people_draft_event_ids(people_id=people_id, time_stamp=time_stamp, draft_people_event_ids=new_draft_event_ids)
+
+            if draft_people_id is not None:
+                old_draft_event_ids = mdb.select_draft_people_draft_event_ids(draft_people_id=draft_people_id)[0]
+                print("old_draft_event_ids" + str(old_draft_event_ids))
+                if old_draft_event_ids is not None and len(str(old_draft_event_ids))>0:
+                    new_draft_event_ids = old_draft_event_ids + "," + str(draft_people_event_id)
+                else:
+                    new_draft_event_ids = draft_people_event_id
+                print("new_draft_event_ids" + str(new_draft_event_ids))
+                mdb.update_draft_people_draft_event_ids(draft_people_id=draft_people_id, time_stamp=time_stamp, draft_people_event_ids=new_draft_event_ids)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "save people event draft error"

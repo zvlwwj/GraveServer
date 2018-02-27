@@ -31,6 +31,10 @@ class DraftPeopleDescriptionHandler(tornado.web.RequestHandler):
                                                                                   draft_people_id=draft_people_id,
                                                                                   description_text=description_text,
                                                                                   people_id=people_id)
+                if people_id is not None:
+                    mdb.update_people_draft_description_id(people_id=people_id, time_stamp=time_stamp, draft_people_description_id=draft_people_description_id)
+                elif draft_people_id is not None:
+                    mdb.update_draft_people_draft_people_description_id(draft_people_id=draft_people_id, time_stamp=time_stamp, draft_people_description_id=draft_people_description_id)
                 print("insert_draft_people_description")
         except BaseException as e:
             data['code'] = -1

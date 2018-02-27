@@ -145,8 +145,22 @@ class GetDraftPeopleHandler(tornado.web.RequestHandler):
             if description_id is not None:
                 description_text = mdb.select_people_description(description_id)[2]
             description = {"description_id": description_id, "description_text": description_text}
+            draft_people_description_id = line[16]
+            draft_people_event_ids = line[17]
+            print("draft_people_event_ids"+str(draft_people_event_ids))
+            draft_events = []
+            if draft_people_event_ids is not None:
+                ids = draft_people_event_ids.split(",")
+                print("ids" + str(ids))
+                for draft_event_id in ids:
+                    title = mdb.select_draft_people_event(draft_event_id)[4]
+                    event_text = mdb.select_draft_people_event(draft_event_id)[5]
+                    draft_event = {"draft_event_id": draft_event_id, "draft_event_title": title,
+                                   "draft_event_text": event_text}
+                    draft_events.append(draft_event)
             info = {"name": name,"cover_url":cover_url,"alive":alive,"nationality":nationality,"birthplace":birthplace,"residence":residence
-                ,"grave_place":grave_place,"birth_day":birth_day,"death_day":death_day,"description":description,"motto":motto,"industry":industry,"events":events,"uploader":uploader}
+                ,"grave_place":grave_place,"birth_day":birth_day,"death_day":death_day,"description":description,"motto":motto,"industry":industry,"events":events
+                ,"uploader":uploader,"draft_people_description_id":draft_people_description_id,"draftEvents":draft_events}
             data['info'] = info
         except BaseException as e:
             data['code'] = -1
