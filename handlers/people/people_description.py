@@ -127,24 +127,7 @@ class GetPeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
             data['description_text'] = lines[4]
         self.write(json.dumps(data))
 
-#删除人物描述草稿
-class DeletePeopleDescriptionFromDraftHandler(tornado.web.RequestHandler):
-    def post(self):
-        draft_people_description_id = self.get_argument("draft_people_description_id")
-        data = {}
-        try:
-            line = mdb.select_draft_people_description(draft_people_description_id)
-            people_id = line[3]
-            draft_people_id = line[2]
-            mdb.delete_draft_people_description(people_id=people_id,draft_people_id=draft_people_id)
-        except BaseException as e:
-            data['code'] = -1
-            data['msg'] = "delete people description draft error"
-            logging.exception(e)
-        else:
-            data['code'] = 0
-            data['msg'] = "delete people description draft success"
-        self.write(json.dumps(data))
+
 
 #从人物描述中获取人物描述文本
 class GetPeopleDescriptionHandler(tornado.web.RequestHandler):

@@ -52,7 +52,7 @@ class CommitPeopleHandler(tornado.web.RequestHandler):
                 new_people_ids = str(people_id)
 
             print(new_people_ids)
-            mdb.update_user_people_ids(new_people_ids)
+            mdb.update_user_people_ids(people_ids=new_people_ids, user_name=uploader)
             # 删除draft_people数据
             if draft_people_id is not None:
                 mdb.delete_draft_people(draft_people_id=draft_people_id)
@@ -195,6 +195,41 @@ class GetPeopleHandler(tornado.web.RequestHandler):
                 ,"draft_people_description_id":draft_people_description_id,"draftEvents":draft_events}
             print(info)
             data['info'] = info
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "get people error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "get people success"
+        self.write(json.dumps(data))
+
+class DeletePeopleHandler(tornado.web.RequestHandler):
+    def post(self):
+        people_id = self.get_argument("people_id")
+        data = {}
+        try:
+            # 删除人物数据
+            mdb.delete_people(people_id=people_id)
+            # 删除人物描述数据
+            mdb.delete_people_description_use_people_id(people_id=people_id)
+            # 删除人物事件数据
+            mdb.delete_people_event_use_people_id(people_id=people_id)
+            # 删除人物描述草稿数据
+            mdb.delete_draft_people_description_use_people_id(people_id=people_id)
+            # 删除人物事件草稿数据
+            mdb.delete_draft_people_event_use_people_id(people_id=people_id)
+            # 从用户表中删除人物草稿关联
+            uploader = mdb.select_people_info(people_id=people_id)[18]
+            old_people_ids = mdb.select_people_ids_from_user(uploader=uploader)[0]
+            if old_people_ids is not None:
+                if "," + people_id in old_people_ids:
+                    new_people_ids = old_people_ids.replace("," + people_id, '')
+                if people_id + "," in old_people_ids:
+                    new_people_ids = old_people_ids.replace(people_id + ",", '')
+                else:
+                    new_people_ids = None
+                mdb.update_user_people_ids(user_name=uploader, people_ids=new_people_ids)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "get people error"

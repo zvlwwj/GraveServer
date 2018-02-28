@@ -69,9 +69,48 @@ class UpdateDraftPeopleDescriptionHandler(tornado.web.RequestHandler):
                                           event_text=event_text)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "save people description draft error"
+            data['msg'] = "update people event draft error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "save people description draft success"
+            data['msg'] = "update people event draft success"
+        self.write(json.dumps(data))
+
+# 删除人物事件的草稿
+class DeleteDraftPeopleEventHandler(tornado.web.RequestHandler):
+    def post(self):
+        draft_people_event_id = self.get_argument("draft_people_event_id")
+        time_stamp = self.get_argument("time_stamp")
+        data = {}
+        try:
+            line = mdb.select_draft_people_event(draft_people_event_id=draft_people_event_id)
+            people_id = line[3]
+            draft_people_id = line[2]
+            if people_id is not None:
+                old_draft_event_ids = mdb.select_people_draft_event_ids(people_id=people_id)
+                if str(draft_people_event_id)+"," in old_draft_event_ids:
+                    new_draft_event_ids = old_draft_event_ids.replace(str(draft_people_event_id)+",", '')
+                elif ","+str(draft_people_event_id) in old_draft_event_ids:
+                    new_draft_event_ids = old_draft_event_ids.replace(","+str(draft_people_event_id), '')
+                else:
+                    new_draft_event_ids = None
+                mdb.update_people_draft_event_ids(people_id=people_id, time_stamp=time_stamp, draft_people_event_ids=new_draft_event_ids)
+
+            if draft_people_id is not None:
+                old_draft_event_ids = mdb.select_draft_people_draft_event_ids(draft_people_id=draft_people_id)
+                if str(draft_people_event_id)+"," in old_draft_event_ids:
+                    new_draft_event_ids = old_draft_event_ids.replace(str(draft_people_event_id)+",", '')
+                elif ","+str(draft_people_event_id) in old_draft_event_ids:
+                    new_draft_event_ids = old_draft_event_ids.replace(","+str(draft_people_event_id), '')
+                else:
+                    new_draft_event_ids = None
+                mdb.update_draft_people_draft_event_ids(draft_people_id=draft_people_id, time_stamp=time_stamp, draft_people_event_ids=new_draft_event_ids)
+            mdb.delete_draft_people_event(draft_people_event_id=draft_people_event_id)
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "delete draft people event draft error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "delete draft people event draft success"
         self.write(json.dumps(data))

@@ -170,3 +170,38 @@ class GetDraftPeopleHandler(tornado.web.RequestHandler):
             data['code'] = 0
             data['msg'] = "get people success"
         self.write(json.dumps(data))
+
+class DeleteDraftPeopleHandler(tornado.web.RequestHandler):
+    def post(self):
+        draft_people_id = self.get_argument("draft_people_id")
+        data = {}
+        try:
+            # 删除人物草稿数据
+            mdb.delete_draft_people(draft_people_id=draft_people_id)
+            # 从人物草稿中删除人物描述数据
+            mdb.delete_people_description_use_draft_people_id(draft_people_id=draft_people_id)
+            # 从人物草稿中删除人物事件数据
+            mdb.delete_people_event_use_draft_people_id(draft_people_id=draft_people_id)
+            # 从人物草稿中删除人物描述草稿数据
+            mdb.delete_draft_people_description_use_draft_people_id(draft_people_id=draft_people_id)
+            # 从人物草稿中删除人物事件草稿数据
+            mdb.delete_draft_people_event_use_draft_people_id(draft_people_id=draft_people_id)
+            # 从用户表中删除人物草稿关联
+            uploader = mdb.select_draft_people_info(draft_people_id=draft_people_id)[1]
+            old_draft_people_ids = mdb.select_draft_people_ids_from_user(uploader=uploader)[0]
+            if old_draft_people_ids is not None:
+                if ","+draft_people_id in old_draft_people_ids:
+                    new_draft_people_ids = old_draft_people_ids.replace(","+draft_people_id, '')
+                if draft_people_id+"," in old_draft_people_ids:
+                    new_draft_people_ids = old_draft_people_ids.replace(draft_people_id+",", '')
+                else:
+                    new_draft_people_ids = None
+                mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_draft_people_ids)
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "get people error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "get people success"
+        self.write(json.dumps(data))

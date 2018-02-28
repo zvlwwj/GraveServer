@@ -48,6 +48,8 @@ class CommitPeopleEventsHandler(tornado.web.RequestHandler):
                             elif str(draft_people_event_id)+"," in old_people_draft_event_ids:
                                 draft_people_event_ids = old_people_draft_event_ids.replace(str(draft_people_event_id)+",",'')
                         mdb.update_draft_people_draft_event_ids(draft_people_id=draft_people_id,time_stamp=time_stamp,draft_people_event_ids=draft_people_event_ids)
+                    # 删除草稿数据
+                    mdb.delete_draft_people_event(draft_people_event_id)
 
             elif people_id is not None:
                 people_event_id_old = mdb.select_people_event_ids(people_id)
@@ -66,8 +68,8 @@ class CommitPeopleEventsHandler(tornado.web.RequestHandler):
                         draft_people_event_ids = str(old_people_draft_event_ids).replace(str(draft_people_event_id), '')
                         mdb.update_people_draft_event_ids(people_id=people_id, time_stamp=time_stamp,
                                                           draft_people_event_ids=draft_people_event_ids)
-            # 删除草稿数据
-            mdb.delete_draft_people_event(draft_people_event_id)
+                    # 删除草稿数据
+                    mdb.delete_draft_people_event(draft_people_event_id)
         except BaseException as e:
             data['code'] = -1
             data['msg'] = "commit people event error"
@@ -139,4 +141,45 @@ class GetPeopleEventHandler(tornado.web.RequestHandler):
             data['msg'] = "commit people event success"
             data['event_title'] = lines[2]
             data['event_text'] = lines[3]
+        self.write(json.dumps(data))
+
+#删除人物事件
+class DeletePeopleEventHandler(tornado.web.RequestHandler):
+    def post(self):
+        people_event_id = self.get_argument("people_event_id")
+        time_stamp = self.get_argument("time_stamp")
+        data = {}
+        try:
+            line = mdb.select_people_event(people_event_id)
+            people_id = line[5]
+            draft_people_id = line[6]
+            if people_id is not None:
+                old_event_ids = mdb.select_people_event_ids(people_id=people_id)[0]
+                if str(people_event_id)+"," in old_event_ids:
+                    new_event_ids = old_event_ids.replace(str(people_event_id)+",", '')
+                elif ","+str(people_event_id) in old_event_ids:
+                    new_event_ids = old_event_ids.replace(","+str(people_event_id), '')
+                else:
+                    new_event_ids = None
+                mdb.update_people_event_id(people_id=people_id, time_stamp=time_stamp, event_ids=new_event_ids)
+
+            if draft_people_id is not None:
+                old_event_ids = mdb.select_draft_people_event_ids(draft_people_id=draft_people_id)[0]
+                if str(people_event_id)+"," in old_event_ids:
+                    new_event_ids = old_event_ids.replace(str(people_event_id)+",", '')
+                elif "," + str(people_event_id) in old_event_ids:
+                    new_event_ids = old_event_ids.replace("," + str(people_event_id), '')
+                else:
+                    new_event_ids = None
+                mdb.update_draft_people_event_id(draft_people_id=draft_people_id, time_stamp=time_stamp, event_ids=new_event_ids)
+
+            mdb.delete_people_event(people_event_id=people_event_id)
+
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "delete people event error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "delete people event success"
         self.write(json.dumps(data))

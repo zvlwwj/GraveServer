@@ -20,12 +20,18 @@ def insert_people(uploader,name,time_stamp,cover_url=None,nationality=None,birth
     conn.commit()
     return cur.lastrowid
 
-#更新数据到people数据表
+# 更新数据到people数据表
 def update_people(people_id, uploader,name,time_stamp,cover_url=None,nationality=None,birthplace=None,residence=None,grave_place=None,birth_day=None,death_day=None,motto=None,industry=None,alive=0):
     sql = "update people set uploader = %s , name = %s , time_stamp = %s , cover_url = %s , nationality = %s , birthplace = %s , residence = %s , grave_place = %s , birth_day = %s , death_day = %s , motto = %s , industry = %s  , alive = %s where people_id = %s"
     cur.execute(sql, (uploader, name, time_stamp, cover_url, nationality, birthplace, residence, grave_place, birth_day, death_day, motto,industry, alive, people_id))
     conn.commit()
     return cur.lastrowid
+
+# 删除people中的数据
+def delete_people(people_id):
+    sql = "delete from people where people_id = "+str(people_id)
+    cur.execute(sql)
+    conn.commit()
 
 #从people数据表中删除描述
 def delete_people_description_from_people(people_id):
@@ -301,9 +307,33 @@ def delete_draft_people_description(draft_people_id=None,people_id=None):
         conn.commit()
         delete_draft_people_description_from_people(people_id=people_id)
 
-# 删除人物描述草稿
+# 删除人物描述
 def delete_people_description(people_description_id):
     sql = "delete from people_description where people_description_id="+people_description_id
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物描述
+def delete_people_description_use_people_id(people_id):
+    sql = "delete from people_description where people_id="+str(people_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物事件
+def delete_people_event_use_people_id(people_id):
+    sql = "delete from people_event where people_id="+str(people_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物描述草稿
+def delete_draft_people_description_use_people_id(people_id):
+    sql = "delete from draft_people_description where people_id="+str(people_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物事件草稿
+def delete_draft_people_event_use_people_id(people_id):
+    sql = "delete from draft_people_event where people_id="+str(people_id)
     cur.execute(sql)
     conn.commit()
 
@@ -386,9 +416,9 @@ def select_draft_people_info(draft_people_id):
     return cur.fetchone()
 
 # 更新用户表的people_ids
-def update_user_people_ids(people_ids):
-    sql = "update user set people_ids = '"+people_ids+"'"
-    cur.execute(sql)
+def update_user_people_ids(people_ids,user_name):
+    sql = "update user set people_ids = %s where user_name = %s"
+    cur.execute(sql, (people_ids, user_name))
     conn.commit()
 
 # 从draft_people表中删除
@@ -396,3 +426,45 @@ def delete_draft_people(draft_people_id):
     sql = "delete from draft_people where draft_people_id = "+draft_people_id
     cur.execute(sql)
     conn.commit()
+
+# 删除人物描述
+def delete_people_description_use_draft_people_id(draft_people_id):
+    sql = "delete from people_description where draft_people_id = "+str(draft_people_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物事件
+def delete_people_event_use_draft_people_id(draft_people_id):
+    sql = "delete from people_event where draft_people_id = "+str(draft_people_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物事件
+def delete_people_event(people_event_id):
+    sql = "delete from people_event where people_event_id = " + str(people_event_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物描述草稿
+def delete_draft_people_description_use_draft_people_id(draft_people_id):
+    sql = "delete from draft_people_description where draft_people_id = "+str(draft_people_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 删除人物事件草稿
+def delete_draft_people_event_use_draft_people_id(draft_people_id):
+    sql = "delete from draft_people_event where draft_people_id = "+str(draft_people_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 查询user表中的draft_people_ids
+def select_draft_people_ids_from_user(uploader):
+    sql = "select draft_people_ids from user where user_name = "+uploader
+    cur.execute(sql)
+    return cur.fetchone()
+
+# 查询user表中的people_ids
+def select_people_ids_from_user(uploader):
+    sql = "select people_ids from user where user_name = "+uploader
+    cur.execute(sql)
+    return cur.fetchone()
