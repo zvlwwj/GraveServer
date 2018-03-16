@@ -7,9 +7,9 @@ import url
 import logging
 class InsertDraftPeopleHandler(tornado.web.RequestHandler):
     def post(self):
-        cover_url = self.get_argument("cover_url", default=None)
         uploader = self.get_argument("username")
         name = self.get_argument("name")
+        cover_url = self.get_argument("cover_url", default=None)
         nationality = self.get_argument("nationality", default=None)
         birthplace = self.get_argument("birthplace", default=None)
         residence = self.get_argument("residence", default=None)
@@ -51,10 +51,10 @@ class InsertDraftPeopleHandler(tornado.web.RequestHandler):
 
 class UpdateDraftPeopleHandler(tornado.web.RequestHandler):
     def post(self):
-        cover_url = self.get_argument("cover_url", default=None)
         draft_people_id = self.get_argument("draft_people_id")
         uploader = self.get_argument("username")
         name = self.get_argument("name")
+        cover_url = self.get_argument("cover_url", default=None)
         nationality = self.get_argument("nationality", default=None)
         birthplace = self.get_argument("birthplace", default=None)
         residence = self.get_argument("residence", default=None)
@@ -106,11 +106,11 @@ class GetDraftPeopleSample(tornado.web.RequestHandler):
                 data['infos'] = infos
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "get creation people sample error"
+            data['msg'] = "get draft people sample error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "get creation people sample success"
+            data['msg'] = "get draft people sample success"
         self.write(json.dumps(data))
 
 class GetDraftPeopleHandler(tornado.web.RequestHandler):
@@ -164,11 +164,11 @@ class GetDraftPeopleHandler(tornado.web.RequestHandler):
             data['info'] = info
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "get people error"
+            data['msg'] = "get people draft error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "get people success"
+            data['msg'] = "get people draft success"
         self.write(json.dumps(data))
 
 class DeleteDraftPeopleHandler(tornado.web.RequestHandler):
@@ -176,6 +176,18 @@ class DeleteDraftPeopleHandler(tornado.web.RequestHandler):
         draft_people_id = self.get_argument("draft_people_id")
         data = {}
         try:
+            # 从用户表中删除人物草稿关联
+            uploader = mdb.select_draft_people_info(draft_people_id=draft_people_id)[1]
+            old_draft_people_ids = mdb.select_draft_people_ids_from_user(uploader=uploader)[0]
+            if old_draft_people_ids is not None:
+                if "," + draft_people_id in old_draft_people_ids:
+                    new_draft_people_ids = old_draft_people_ids.replace("," + draft_people_id, '')
+                if draft_people_id + "," in old_draft_people_ids:
+                    new_draft_people_ids = old_draft_people_ids.replace(draft_people_id + ",", '')
+                else:
+                    new_draft_people_ids = None
+                mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_draft_people_ids)
+
             # 删除人物草稿数据
             mdb.delete_draft_people(draft_people_id=draft_people_id)
             # 从人物草稿中删除人物描述数据
@@ -186,22 +198,11 @@ class DeleteDraftPeopleHandler(tornado.web.RequestHandler):
             mdb.delete_draft_people_description_use_draft_people_id(draft_people_id=draft_people_id)
             # 从人物草稿中删除人物事件草稿数据
             mdb.delete_draft_people_event_use_draft_people_id(draft_people_id=draft_people_id)
-            # 从用户表中删除人物草稿关联
-            uploader = mdb.select_draft_people_info(draft_people_id=draft_people_id)[1]
-            old_draft_people_ids = mdb.select_draft_people_ids_from_user(uploader=uploader)[0]
-            if old_draft_people_ids is not None:
-                if ","+draft_people_id in old_draft_people_ids:
-                    new_draft_people_ids = old_draft_people_ids.replace(","+draft_people_id, '')
-                if draft_people_id+"," in old_draft_people_ids:
-                    new_draft_people_ids = old_draft_people_ids.replace(draft_people_id+",", '')
-                else:
-                    new_draft_people_ids = None
-                mdb.update_user_draft_people(user_name=uploader, draft_people_ids=new_draft_people_ids)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "get people error"
+            data['msg'] = "delete draft people error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "get people success"
+            data['msg'] = "delete draft people success"
         self.write(json.dumps(data))

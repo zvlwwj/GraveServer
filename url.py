@@ -22,8 +22,8 @@ from handlers.people.people_events import GetPeopleEventFromDraftHandler, GetPeo
 from handlers.public.AboutFile import UploadFileHandler,DeleteFileHandler
 from handlers.account.getAccountInfo import GetAccountInfoHandler
 
-base_url ="http://192.168.31.134:8000"
-
+# base_url ="http://35.229.220.81:8000"
+base_url ="http://172.16.4.32:8000"
 url = [
     (r'/', IndexHandler),
     # ===========用户相关===========

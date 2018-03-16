@@ -102,11 +102,11 @@ class UpdatePeopleHandler(tornado.web.RequestHandler):
             mdb.update_people(uploader=uploader, name=name, time_stamp=time_stamp, cover_url=cover_url, nationality=nationality, birthplace=birthplace, residence=residence, grave_place=grave_place, birth_day=birth_day, death_day=death_day, motto=motto, industry=industry, alive=alive, people_id=people_id)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "insert error"
+            data['msg'] = "update error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "insert success"
+            data['msg'] = "update success"
             data['people_id'] = people_id
         self.write(json.dumps(data))
 
@@ -209,16 +209,6 @@ class DeletePeopleHandler(tornado.web.RequestHandler):
         people_id = self.get_argument("people_id")
         data = {}
         try:
-            # 删除人物数据
-            mdb.delete_people(people_id=people_id)
-            # 删除人物描述数据
-            mdb.delete_people_description_use_people_id(people_id=people_id)
-            # 删除人物事件数据
-            mdb.delete_people_event_use_people_id(people_id=people_id)
-            # 删除人物描述草稿数据
-            mdb.delete_draft_people_description_use_people_id(people_id=people_id)
-            # 删除人物事件草稿数据
-            mdb.delete_draft_people_event_use_people_id(people_id=people_id)
             # 从用户表中删除人物草稿关联
             uploader = mdb.select_people_info(people_id=people_id)[18]
             old_people_ids = mdb.select_people_ids_from_user(uploader=uploader)[0]
@@ -230,11 +220,21 @@ class DeletePeopleHandler(tornado.web.RequestHandler):
                 else:
                     new_people_ids = None
                 mdb.update_user_people_ids(user_name=uploader, people_ids=new_people_ids)
+            # 删除人物数据
+            mdb.delete_people(people_id=people_id)
+            # 删除人物描述数据
+            mdb.delete_people_description_use_people_id(people_id=people_id)
+            # 删除人物事件数据
+            mdb.delete_people_event_use_people_id(people_id=people_id)
+            # 删除人物描述草稿数据
+            mdb.delete_draft_people_description_use_people_id(people_id=people_id)
+            # 删除人物事件草稿数据
+            mdb.delete_draft_people_event_use_people_id(people_id=people_id)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "get people error"
+            data['msg'] = "delete people error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "get people success"
+            data['msg'] = "delete people success"
         self.write(json.dumps(data))

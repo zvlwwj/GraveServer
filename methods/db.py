@@ -3,7 +3,7 @@
 
 import mysql.connector
 # conn = mysql.connector.connect(host="localhost", user="root", passwd="zv63108412", db="grave_server_db", port=3306, charset="utf8")    #连接对象
-conn = mysql.connector.connect(host="localhost", user="root", passwd="", db="grave_server_db", port=3306, charset="utf8")
+conn = mysql.connector.connect(host="35.229.220.81", user="root", passwd="zv63108412", db="grave_server_db", port=3306, charset="utf8")
 cur = conn.cursor()    #游标对象
 
 def select_table(table, column, condition, value):

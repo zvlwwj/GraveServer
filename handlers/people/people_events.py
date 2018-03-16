@@ -134,11 +134,11 @@ class GetPeopleEventHandler(tornado.web.RequestHandler):
             lines = mdb.select_people_event(people_event_id=people_event_id)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "commit people event error"
+            data['msg'] = "get people event error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "commit people event success"
+            data['msg'] = "get people event success"
             data['event_title'] = lines[2]
             data['event_text'] = lines[3]
         self.write(json.dumps(data))

@@ -39,9 +39,9 @@ class DeleteFileHandler(tornado.web.RequestHandler):
             os.remove(relative_url)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "upload file error"
+            data['msg'] = "delete file error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "upload file success"
+            data['msg'] = "delete file success"
         self.write(json.dumps(data))

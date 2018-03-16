@@ -138,11 +138,11 @@ class GetPeopleDescriptionHandler(tornado.web.RequestHandler):
             lines = mdb.select_people_description(people_description_id)
         except BaseException as e:
             data['code'] = -1
-            data['msg'] = "commit people description error"
+            data['msg'] = "get people description error"
             logging.exception(e)
         else:
             data['code'] = 0
-            data['msg'] = "commit people description success"
+            data['msg'] = "get people description success"
             print(lines)
             data['description_text'] = lines[2]
         self.write(json.dumps(data))
