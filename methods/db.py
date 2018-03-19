@@ -468,3 +468,23 @@ def select_people_ids_from_user(uploader):
     sql = "select people_ids from user where user_name = "+uploader
     cur.execute(sql)
     return cur.fetchone()
+
+# 添加新的评论
+def insert_comment(text,uploader_id,reply_id,type,type_id,time_stamp):
+    sql_insert = "insert into comment (text,uploader_id,reply_id,type,type_id,time_stamp) " \
+                 "values (%s,%s,%s,%s,%s,%s)"
+    cur.execute(sql_insert, (text, uploader_id, reply_id, type, type_id,time_stamp))
+    conn.commit()
+    return cur.lastrowid
+
+# 查询评论
+def select_comment(type, type_id):
+    sql = "select * from comment where type = "+type+"and type_id = "+str(type_id)
+    cur.execute(sql)
+    return cur.fetchall()
+
+# 查询用户信息
+def select_user_info(user_id):
+    sql = "select * from user where user_id = "+str(user_id)
+    cur.execute(sql)
+    return cur.fetchone()

@@ -9,6 +9,8 @@ from importlib import reload
 
 import tornado
 
+from handlers.comment.comment import CommitCommentHandler
+
 reload(sys)
 from handlers.index import IndexHandler
 from handlers.account.login import LoginHandler
@@ -93,5 +95,11 @@ url = [
     # 删除人物事件
     (r'/people/event/delete', DeletePeopleEventHandler),
     # 删除人物事件草稿
-    (r'/draft/people_events/delete', DeleteDraftPeopleEventHandler)
+    (r'/draft/people_events/delete', DeleteDraftPeopleEventHandler),
+
+    # ============评论相关==========
+    # 提交评论
+    (r'/comment/add', CommitCommentHandler)
+    # 获取评论列表
+    # 删除评论
 ]
