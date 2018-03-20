@@ -415,6 +415,16 @@ def select_draft_people_info(draft_people_id):
     cur.execute(sql)
     return cur.fetchone()
 
+# 更新用户表的昵称和头像
+def edit_user_info(nickname, avatar_url, user_id):
+    if avatar_url is not None:
+        sql = "update user set nick_name = %s , avatar_url = %s where user_id = %s"
+        cur.execute(sql, (nickname, avatar_url, user_id))
+    else:
+        sql = "update user set nick_name = %s where user_id = %s"
+        cur.execute(sql, (nickname, user_id))
+    conn.commit()
+
 # 更新用户表的people_ids
 def update_user_people_ids(people_ids,user_name):
     sql = "update user set people_ids = %s where user_name = %s"
@@ -479,8 +489,8 @@ def insert_comment(text,uploader_id,reply_id,type,type_id,time_stamp):
 
 # 查询评论
 def select_comment(type, type_id):
-    sql = "select * from comment where type = "+type+"and type_id = "+str(type_id)
-    cur.execute(sql)
+    sql = "select * from comment where type = %s and type_id = %s"
+    cur.execute(sql, (type, type_id))
     return cur.fetchall()
 
 # 查询用户信息

@@ -52,7 +52,7 @@ class GetCommentHandler (tornado.web.RequestHandler):
                 line = mdb.select_user_info(user_id=uploader_id)
                 nick_name = line[3]
                 avatar_url = line[4]
-                info = {"comment_id": comment_id, "text": text, "uploader_id": uploader_id, "nick_name": nick_name, "avatar_url": avatar_url, "upvote": upvote, "reply_id": reply_id, "type": type, "type_id": type_id, "time_stamp": time_stamp}
+                info = {"comment_id": comment_id, "text": text, "nick_name": nick_name, "avatar_url": avatar_url, "upvote": upvote, "reply_id": reply_id, "type": type, "type_id": type_id, "time_stamp": time_stamp}
                 infos.append(info)
             data['infos'] = infos
         self.write(json.dumps(data))

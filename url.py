@@ -9,7 +9,7 @@ from importlib import reload
 
 import tornado
 
-from handlers.comment.comment import CommitCommentHandler
+from handlers.comment.comment import CommitCommentHandler, GetCommentHandler
 
 reload(sys)
 from handlers.index import IndexHandler
@@ -22,7 +22,7 @@ from handlers.people.people_events import CommitPeopleEventsHandler, UpdatePeopl
 from handlers.draft.draft_people_event import CommitDraftPeopleDescriptionHandler, UpdateDraftPeopleDescriptionHandler, DeleteDraftPeopleEventHandler
 from handlers.people.people_events import GetPeopleEventFromDraftHandler, GetPeopleEventHandler, DeletePeopleEventHandler
 from handlers.public.AboutFile import UploadFileHandler,DeleteFileHandler
-from handlers.account.getAccountInfo import GetAccountInfoHandler
+from handlers.account.Account import GetAccountInfoHandler, EditAccountInfoHandler
 
 # base_url ="http://35.229.220.81:8000"
 base_url ="http://172.16.4.32:8000"
@@ -32,7 +32,9 @@ url = [
     # 登录
     (r'/login', LoginHandler),
     # 获取用户信息
-    (r'/get/accountInfo', GetAccountInfoHandler),
+    (r'/accountInfo/get', GetAccountInfoHandler),
+    # 编辑昵称和头像
+    (r'/accountInfo/edit', EditAccountInfoHandler),
 
     # ===========文件相关=========
     # 上传文件
@@ -99,7 +101,8 @@ url = [
 
     # ============评论相关==========
     # 提交评论
-    (r'/comment/add', CommitCommentHandler)
+    (r'/comment/add', CommitCommentHandler),
     # 获取评论列表
+    (r'/comment/get', GetCommentHandler)
     # 删除评论
 ]

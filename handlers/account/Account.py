@@ -5,6 +5,8 @@ import logging
 import tornado.web
 import methods.db as mdb
 import json
+import url
+import os
 class GetAccountInfoHandler(tornado.web.RequestHandler):
     def post(self):
         user_id = self.get_argument("user_id")
@@ -49,5 +51,33 @@ class GetAccountInfoHandler(tornado.web.RequestHandler):
             info['collection_event_ids'] = collection_event_ids
             info['collection_article_ids'] = collection_article_ids
             data['info'] = info
+        json_data = json.dumps(data)
+        self.write(json_data)
+
+class EditAccountInfoHandler(tornado.web.RequestHandler):
+    def post(self):
+        user_id = self.get_argument("user_id")
+        nick_name = self.get_argument("nick_name")
+        files = self.request.files
+        data = {}
+        try:
+            avatar_url = None
+            file = files.get("file")
+            if file is not None:
+                for img in file:
+                    with open("./static/user/avatar/" + img['filename'], 'wb') as f:
+                        f.write(img['body'])
+                        avatar_url = url.base_url+"/static/user/avatar/" + img['filename']
+                        user_infos = mdb.select_table(table="user", column="*", condition="user_id", value=user_id)
+                        old_avatar_url = user_infos[0][4]
+                        os.remove(old_avatar_url.replace(url.base_url, "."))
+            mdb.edit_user_info(nickname=nick_name, avatar_url=avatar_url, user_id=user_id)
+        except BaseException as e:
+            data['code'] = -1
+            data['msg'] = "edit account info error"
+            logging.exception(e)
+        else:
+            data['code'] = 0
+            data['msg'] = "edit account info success"
         json_data = json.dumps(data)
         self.write(json_data)
