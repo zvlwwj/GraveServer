@@ -493,8 +493,48 @@ def select_comment(type, type_id):
     cur.execute(sql, (type, type_id))
     return cur.fetchall()
 
+# 查询评论(使用comment_id)
+def select_comment_use_id(comment_id):
+    sql = "select * from comment where comment_id = "+comment_id
+    cur.execute(sql)
+    return cur.fetchone()
+
 # 查询用户信息
 def select_user_info(user_id):
     sql = "select * from user where user_id = "+str(user_id)
     cur.execute(sql)
+    return cur.fetchone()
+
+# 删除评论
+def delete_comment(comment_id):
+    sql = "delete from comment where comment_id = "+str(comment_id)
+    cur.execute(sql)
+    conn.commit()
+
+# 用户点赞评论
+def insert_comment_upvote(comment_id, upvote_user_id):
+    sql = "insert into comment_upvote (comment_id,upvote_user_id) values(%s,%s)"
+    cur.execute(sql, (comment_id, upvote_user_id))
+    conn.commit()
+
+# 更新comment表中的upvote数量
+def update_comment_upvote(comment_id, upvote):
+    sql = "update comment set upvote = %s where comment_id = %s"
+    cur.execute(sql, (upvote, comment_id))
+    conn.commit()
+
+# 删除点赞记录
+def delete_comment_upvote(comment_id, upvote_user_id):
+    if upvote_user_id is not None:
+        sql = "delete from comment_upvote where comment_id = %s and upvote_user_id = %s"
+        cur.execute(sql, (comment_id, upvote_user_id))
+    else:
+        sql = "delete from comment_upvote where comment_id ="+comment_id
+        cur.execute(sql)
+    conn.commit()
+
+# 查询该user_id 是否upvote
+def select_comment_upvote(comment_id, upvote_user_id):
+    sql = "select * from comment_upvote where comment_id = %s and upvote_user_id = %s"
+    cur.execute(sql, (comment_id, upvote_user_id))
     return cur.fetchone()
