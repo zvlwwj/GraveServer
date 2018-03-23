@@ -4,6 +4,7 @@ import tornado.web
 import methods.db as mdb
 import json
 import logging
+from time import time
 class CommitCommentHandler (tornado.web.RequestHandler):
     def post(self):
         text = self.get_argument("text")
@@ -41,6 +42,7 @@ class GetCommentHandler (tornado.web.RequestHandler):
             data["code"] = 0
             data['msg'] = "get comment success"
             infos = []
+
             for line in lines:
                 comment_id = line[0]
                 text = line[1]
@@ -60,6 +62,8 @@ class GetCommentHandler (tornado.web.RequestHandler):
                     is_upvote = False
                 info = {"comment_id": comment_id, "text": text, "uploader_id": uploader_id,  "nick_name": nick_name, "avatar_url": avatar_url, "upvote_count": upvote_count, "is_upvote": is_upvote, "reply_id": reply_id, "type": type, "type_id": type_id, "time_stamp": time_stamp}
                 infos.append(info)
+
+
             data['infos'] = infos
         self.write(json.dumps(data))
 
