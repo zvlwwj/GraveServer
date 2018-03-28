@@ -480,18 +480,31 @@ def select_people_ids_from_user(uploader):
     return cur.fetchone()
 
 # 添加新的评论
-def insert_comment(text,uploader_id,reply_id,type,type_id,time_stamp):
-    sql_insert = "insert into comment (text,uploader_id,reply_id,type,type_id,time_stamp) " \
+def insert_comment(text,uploader_id,previous_id,type,type_id,time_stamp):
+    sql_insert = "insert into comment (text,uploader_id,previous_id,type,type_id,time_stamp) " \
                  "values (%s,%s,%s,%s,%s,%s)"
-    cur.execute(sql_insert, (text, uploader_id, reply_id, type, type_id,time_stamp))
+    cur.execute(sql_insert, (text, uploader_id, previous_id, type, type_id,time_stamp))
     conn.commit()
     return cur.lastrowid
+
+# 更新评论中的next_id
+def update_comment_next_id(next_ids,comment_id):
+    sql = "update comment set next_ids = %s where comment_id = %s"
+    cur.execute(sql, (next_ids, comment_id))
+    conn.commit()
+
 
 # 查询评论
 def select_comment(type, type_id):
     sql = "select * from comment where type = %s and type_id = %s"
     cur.execute(sql, (type, type_id))
     return cur.fetchall()
+
+# 查询评论
+def select_comment_use_id(comment_id):
+    sql = "select * from comment where comment_id = "+comment_id
+    cur.execute(sql)
+    return cur.fetchone()
 
 # 查询评论(使用comment_id)
 def select_comment_use_id(comment_id):
@@ -537,4 +550,10 @@ def delete_comment_upvote(comment_id, upvote_user_id):
 def select_comment_upvote(comment_id, upvote_user_id):
     sql = "select * from comment_upvote where comment_id = %s and upvote_user_id = %s"
     cur.execute(sql, (comment_id, upvote_user_id))
+    return cur.fetchone()
+
+# 查询next_ids
+def select_comment_next_ids(comment_id):
+    sql = "select next_ids from comment where comment_id = "+str(comment_id)
+    cur.execute(sql)
     return cur.fetchone()

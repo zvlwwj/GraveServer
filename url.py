@@ -10,7 +10,7 @@ from importlib import reload
 import tornado
 
 from handlers.comment.comment import CommitCommentHandler, GetCommentHandler, UpvoteCommentHandler, \
-    CancelUpvoteCommentHandler, DeleteCommentHandler
+    CancelUpvoteCommentHandler, DeleteCommentHandler, GetConversationCommentHandler
 
 reload(sys)
 from handlers.index import IndexHandler
@@ -110,5 +110,7 @@ url = [
     # 赞评论
     (r'/comment/upvote', UpvoteCommentHandler),
     # 取消赞评论
-    (r'/comment/cancel_upvote', CancelUpvoteCommentHandler)
+    (r'/comment/cancel_upvote', CancelUpvoteCommentHandler),
+    # 获取对话列表
+    (r'/comment/get/conversation', GetConversationCommentHandler)
 ]
