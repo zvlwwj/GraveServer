@@ -11,6 +11,7 @@ import tornado
 
 from handlers.comment.comment import CommitCommentHandler, GetCommentHandler, UpvoteCommentHandler, \
     CancelUpvoteCommentHandler, DeleteCommentHandler, GetConversationCommentHandler
+from handlers.public.home import GetRecommendListHandler
 
 reload(sys)
 from handlers.index import IndexHandler
@@ -112,5 +113,8 @@ url = [
     # 取消赞评论
     (r'/comment/cancel_upvote', CancelUpvoteCommentHandler),
     # 获取对话列表
-    (r'/comment/get/conversation', GetConversationCommentHandler)
+    (r'/comment/get/conversation', GetConversationCommentHandler),
+
+    # ============主页推荐===========
+    (r'/homepage/recommend/getlist', GetRecommendListHandler)
 ]

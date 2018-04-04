@@ -398,6 +398,13 @@ def select_user_people_ids(condition, value):
     people_ids = cur.fetchone()
     return people_ids
 
+# 从people表中查询所有的people
+def select_peoples():
+    sql = "select * from people"
+    cur.execute(sql)
+    lines = cur.fetchall()
+    return lines
+
 # 从用户表中查询该用户创建的draft_people_ids
 def select_user_draft_people_ids(condition, value):
     sql = "select draft_people_ids from user where "+condition+" = "+value
